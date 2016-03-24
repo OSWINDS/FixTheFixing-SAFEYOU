@@ -26,6 +26,11 @@ public class MongoConnector {
         _db = mongoClient.getDatabase("fixthefixing");
     }
 
+    /**
+     * Inserts tweet to tweets collection
+     * @param trend The trend the tweet is associated to
+     * @param json The tweet's JSON
+     */
     public void addTweet(String trend, String json) {
         MongoCollection<Document> coll = _db.getCollection("tweets");
 
