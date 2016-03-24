@@ -17,7 +17,7 @@ public class MongoConnector {
 
     private MongoDatabase _db;
     /**
-     * Connects to the given server:port to the database vakali and accesses the tables prefix_*
+     * Connects to the given server:port to the database fixthefixing
      * @param host The host name of the server
      * @param port The port of the server
      */
