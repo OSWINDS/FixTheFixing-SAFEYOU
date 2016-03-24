@@ -6,7 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 /**
- * Created by sifantid on 24/3/2016.
+ * Custom class that connects to MongoDB and inserts, edits and deletes documents
  */
 public class MongoConnector {
 
