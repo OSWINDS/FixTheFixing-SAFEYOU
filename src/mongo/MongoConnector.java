@@ -43,5 +43,7 @@ public class MongoConnector {
 
     public static void main(String[] args) {
         MongoConnector mongoConnector = new MongoConnector("localhost", 27017);
+        // Test insertion
+        mongoConnector.addTweet("#Test","{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
     }
 }
