@@ -4,6 +4,7 @@ package twitter.main;
  * Created by gogopavl on 30/3/2016.
  */
 
+import mongo.MongoConnector;
 import twitter.manager.TweetManager;
 import twitter.manager.TwitterCriteria;
 import twitter.model.Tweet;
@@ -20,6 +21,7 @@ public class Exporter {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     private static JsonBuilderFactory factory = Json.createBuilderFactory(null);
+    private static MongoConnector mc = new MongoConnector("localhost",27017,"Djokovic");
 
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
@@ -64,16 +66,16 @@ public class Exporter {
                 }
             }
 
-            try {
-                BufferedWriter bw = new BufferedWriter(new FileWriter("output_got.csv"));
-                bw.write("username;date;retweets;favorites;text;geo;mentions;hashtags;id;permalink");
-                bw.newLine();
+            //try {
+                //BufferedWriter bw = new BufferedWriter(new FileWriter("output_got.csv"));
+                //bw.write("username;date;retweets;favorites;text;geo;mentions;hashtags;id;permalink");
+                //bw.newLine();
 
                 System.out.println("Obtaining tweets... \n");
 
                 for (Tweet t : TweetManager.getTweets(criteria)) {
-                    bw.write(String.format("%s;%s;%d;%d;\"%s\";%s;%s;%s;\"%s\";%s", t.getUsername(), sdf.format(t.getDate()), t.getRetweets(), t.getFavorites(), t.getText(), t.getGeo(), t.getMentions(), t.getHashtags(), t.getId(), t.getPermalink()));
-                    bw.newLine();
+                    //bw.write(String.format("%s;%s;%d;%d;\"%s\";%s;%s;%s;\"%s\";%s", t.getUsername(), sdf.format(t.getDate()), t.getRetweets(), t.getFavorites(), t.getText(), t.getGeo(), t.getMentions(), t.getHashtags(), t.getId(), t.getPermalink()));
+                    //bw.newLine();
 
                     JsonObject value = factory.createObjectBuilder()
                             .add("user_id", t.getId())
@@ -88,15 +90,17 @@ public class Exporter {
                             .add("permalink",t.getPermalink())
                             .build();
                     //Add "value" to mongo
-                    System.out.println("JSON: "+value.toString());
+                    //System.out.println("JSON: "+value.toString());
+
+                    mc.addTweet(value.toString());
                 }
 
-                bw.close();
+                //bw.close();
 
-                System.out.println("Done. Output file generated \"output_got.csv\".");
-            } catch (IOException e) {
+                System.out.println("Done!"); //Output file generated "output_got.csv"
+            /*} catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
 
     }
