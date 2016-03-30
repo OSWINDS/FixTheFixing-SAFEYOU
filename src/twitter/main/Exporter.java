@@ -4,18 +4,23 @@ package twitter.main;
  * Created by gogopavl on 30/3/2016.
  */
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
+        import java.io.BufferedWriter;
+        import java.io.FileWriter;
+        import java.io.IOException;
+        import java.text.SimpleDateFormat;
 
-import twitter.manager.TweetManager;
-import twitter.manager.TwitterCriteria;
-import twitter.model.Tweet;
+        import twitter.manager.TweetManager;
+        import twitter.manager.TwitterCriteria;
+        import twitter.model.Tweet;
+
+        import javax.json.Json;
+        import javax.json.JsonBuilderFactory;
+        import javax.json.JsonObject;
 
 public class Exporter {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    private static JsonBuilderFactory factory = Json.createBuilderFactory(null);
 
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
@@ -70,6 +75,21 @@ public class Exporter {
                 for (Tweet t : TweetManager.getTweets(criteria)) {
                     bw.write(String.format("%s;%s;%d;%d;\"%s\";%s;%s;%s;\"%s\";%s", t.getUsername(), sdf.format(t.getDate()), t.getRetweets(), t.getFavorites(), t.getText(), t.getGeo(), t.getMentions(), t.getHashtags(), t.getId(), t.getPermalink()));
                     bw.newLine();
+
+                    JsonObject value = factory.createObjectBuilder()
+                            .add("user_id", t.getId())
+                            .add("user_name", t.getUsername())
+                            .add("date", sdf.format(t.getDate()))
+                            .add("text", t.getText())
+                            .add("retweets", t.getRetweets())
+                            .add("favorites", t.getFavorites())
+                            .add("mentions", t.getMentions())
+                            .add("hashtags", t.getHashtags())
+                            .add("geo", t.getGeo())
+                            .add("permalink",t.getPermalink())
+                            .build();
+                    //Add "value" to mongo
+                    System.out.println("JSON: "+value.toString());
                 }
 
                 bw.close();
