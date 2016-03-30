@@ -4,7 +4,6 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import javafx.util.Pair;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -26,15 +25,20 @@ public class MongoConnector {
 
     private MongoDatabase _db;
     private MongoDatabase _db_youtube;
+    private String _coll_name_twitter;
+    private String _coll_name_youtube;
+
     /**
      * Connects to the given server:port to the database fixthefixing
      * @param host The host name of the server
      * @param port The port of the server
      */
-    public MongoConnector(String host, int port) {
+    public MongoConnector(String host, int port, String _coll_name_twitter, String _coll_name_youtube) {
         MongoClient mongoClient = new MongoClient(host, port);
         _db = mongoClient.getDatabase("twitter");
         _db_youtube = mongoClient.getDatabase("youtube");
+        this._coll_name_twitter = _coll_name_twitter;
+        this._coll_name_youtube = _coll_name_youtube;
     }
 
     /**
@@ -42,7 +46,7 @@ public class MongoConnector {
      * @param json The tweet's JSON
      */
     public void addTweet(String json) {
-        MongoCollection<Document> coll = _db.getCollection("tweets");
+        MongoCollection<Document> coll = _db.getCollection(_coll_name_twitter);
 
         Document doc = new Document(_TWEET_PARSED_STRING_, null)
                 .append(_TWEET_JSON_, Document.parse(json));
@@ -55,7 +59,7 @@ public class MongoConnector {
      * @param json The comment's JSON
      */
     public void addYoutubeComment(String json) {
-        MongoCollection<Document> coll = _db_youtube.getCollection("comments");
+        MongoCollection<Document> coll = _db_youtube.getCollection(_coll_name_youtube);
 
         Document doc = new Document(_COMMENT_PARSED_STRING_, null)
                 .append(_COMMENT_JSON_, Document.parse(json));
@@ -73,7 +77,7 @@ public class MongoConnector {
     public boolean insertParsedTweet(ObjectId UUID, String parsedText) {
 
         /* Get db and document */
-        MongoCollection<Document> tweets = _db.getCollection("tweets");
+        MongoCollection<Document> tweets = _db.getCollection(_coll_name_twitter);
         FindIterable<Document> iterable = tweets.find(new Document(_COLL_INDEX_, UUID));
 
         Document document = iterable.first();
@@ -104,7 +108,7 @@ public class MongoConnector {
     }
 
     public static void main(String[] args) {
-        MongoConnector mongoConnector = new MongoConnector("localhost", 27017);
+        MongoConnector mongoConnector = new MongoConnector("localhost", 27017, "djokovic_tweets", "djokovic_youtube");
         // Test insertion
         mongoConnector.addTweet("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
     }
