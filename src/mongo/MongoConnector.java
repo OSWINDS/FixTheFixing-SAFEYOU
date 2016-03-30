@@ -1,11 +1,15 @@
 package mongo;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.json.JSONObject;
+import org.mortbay.util.ajax.JSON;
 
 /**
  * Custom class that connects to MongoDB and inserts, edits and deletes documents

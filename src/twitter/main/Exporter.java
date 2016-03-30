@@ -12,9 +12,6 @@ import twitter.model.Tweet;
 import javax.json.Json;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 public class Exporter {
