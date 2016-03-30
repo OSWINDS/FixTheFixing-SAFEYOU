@@ -1,7 +1,9 @@
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.*;
+import com.google.api.services.youtube.model.CommentSnippet;
+import com.google.api.services.youtube.model.CommentThread;
+import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.common.collect.Lists;
 
 import java.io.BufferedReader;
