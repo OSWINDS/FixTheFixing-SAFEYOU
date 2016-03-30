@@ -1,12 +1,12 @@
-package main;
+package twitter.main;
 
 /**
  * Created by gogopavl on 30/3/2016.
  */
 
-import manager.TweetManager;
-import manager.TwitterCriteria;
-import model.Tweet;
+import twitter.manager.TweetManager;
+import twitter.manager.TwitterCriteria;
+import twitter.model.Tweet;
 
 public class Main {
     private static final String USERNAME = "Username: ";

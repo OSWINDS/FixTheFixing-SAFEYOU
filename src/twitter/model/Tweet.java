@@ -1,4 +1,4 @@
-package model;
+package twitter.model;
 
 /**
  * Created by gogopavl on 30/3/2016.
