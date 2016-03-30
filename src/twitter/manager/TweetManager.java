@@ -1,4 +1,4 @@
-package manager;
+package twitter.manager;
 
 /**
  * Created by gogopavl on 30/3/2016.
@@ -24,7 +24,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import model.Tweet;
+import twitter.model.Tweet;
 
 /**
  * Class to getting tweets based on username and optional time constraints

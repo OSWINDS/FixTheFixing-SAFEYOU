@@ -1,4 +1,4 @@
-package main;
+package twitter.main;
 
 /**
  * Created by gogopavl on 30/3/2016.
@@ -9,9 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
-import manager.TweetManager;
-import manager.TwitterCriteria;
-import model.Tweet;
+import twitter.manager.TweetManager;
+import twitter.manager.TwitterCriteria;
+import twitter.model.Tweet;
 
 public class Exporter {
 
