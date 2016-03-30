@@ -33,12 +33,12 @@ public class MongoConnector {
      * @param host The host name of the server
      * @param port The port of the server
      */
-    public MongoConnector(String host, int port, String _coll_name_twitter, String _coll_name_youtube) {
+    public MongoConnector(String host, int port, String _coll_name) {
         MongoClient mongoClient = new MongoClient(host, port);
         _db = mongoClient.getDatabase("twitter");
         _db_youtube = mongoClient.getDatabase("youtube");
-        this._coll_name_twitter = _coll_name_twitter;
-        this._coll_name_youtube = _coll_name_youtube;
+        _coll_name_twitter = _coll_name + "_tweets";
+        _coll_name_youtube = _coll_name + "_youtube";
     }
 
     /**
@@ -107,8 +107,12 @@ public class MongoConnector {
         System.err.println(str);
     }
 
+    /**
+     * Main function for
+     * @param args
+     */
     public static void main(String[] args) {
-        MongoConnector mongoConnector = new MongoConnector("localhost", 27017, "djokovic_tweets", "djokovic_youtube");
+        MongoConnector mongoConnector = new MongoConnector("localhost", 27017, "djokovic");
         // Test insertion
         mongoConnector.addTweet("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
     }

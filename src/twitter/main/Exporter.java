@@ -4,18 +4,17 @@ package twitter.main;
  * Created by gogopavl on 30/3/2016.
  */
 
-        import java.io.BufferedWriter;
-        import java.io.FileWriter;
-        import java.io.IOException;
-        import java.text.SimpleDateFormat;
+import twitter.manager.TweetManager;
+import twitter.manager.TwitterCriteria;
+import twitter.model.Tweet;
 
-        import twitter.manager.TweetManager;
-        import twitter.manager.TwitterCriteria;
-        import twitter.model.Tweet;
-
-        import javax.json.Json;
-        import javax.json.JsonBuilderFactory;
-        import javax.json.JsonObject;
+import javax.json.Json;
+import javax.json.JsonBuilderFactory;
+import javax.json.JsonObject;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 public class Exporter {
 
