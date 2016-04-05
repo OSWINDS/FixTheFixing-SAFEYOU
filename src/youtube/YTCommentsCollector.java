@@ -189,7 +189,7 @@ public class YTCommentsCollector {
      */
     private ArrayList<String> fetchVideoIds(){
 
-        String filename = "./resources/VideoIDs.txt";
+        String filename = "./resources/DjokovicVideoIDs.txt";
 
         ArrayList<String> videoIDs = new ArrayList<>();
 
