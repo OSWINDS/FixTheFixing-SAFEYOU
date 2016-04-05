@@ -1,15 +1,11 @@
 package mongo;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.json.JSONObject;
-import org.mortbay.util.ajax.JSON;
 
 /**
  * Custom class that connects to MongoDB and inserts, edits and deletes documents
@@ -112,12 +108,12 @@ public class MongoConnector {
     }
 
     /**
-     * Main function for
+     * Example main function for connection to MongoDB
      * @param args
      */
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         MongoConnector mongoConnector = new MongoConnector("localhost", 27017, "djokovic");
         // Test insertion
         mongoConnector.addTweet("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
-    }
+    }*/
 }

@@ -1,6 +1,7 @@
 package twitter.main;
 
 /**
+ * Class to export tweets to the Database
  * Created by gogopavl on 30/3/2016.
  */
 
@@ -14,11 +15,11 @@ import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import java.text.SimpleDateFormat;
 
-public class Exporter {
+public class TwitterExporter {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     private static JsonBuilderFactory factory = Json.createBuilderFactory(null);
-    private static MongoConnector mc = new MongoConnector("localhost",27017,"Djokovic");
+    private static MongoConnector mc = new MongoConnector("localhost", 27017, "djokovic");
 
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
