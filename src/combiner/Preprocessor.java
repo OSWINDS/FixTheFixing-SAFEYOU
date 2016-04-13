@@ -18,7 +18,7 @@ public class Preprocessor {
         String[] temp = tokenizer(input);
         String output = "";
         for(String s : temp){
-            if(isWhitelisted(s)){
+            if(isWhitelisted(s) && isMention(s,'@') == false ){
                 if(output!=null){
                     output = output + " ";
                 }
@@ -26,13 +26,19 @@ public class Preprocessor {
             }
         }
 
-        output = finalizeText(output);
-        return output;
+        return finalizeText(output);
     }
 
     //Processor of youtube comments
-    public static void preprocessComment(){
-
+    public static String preprocessComment(String input){
+        String[] tokens = tokenizer(input);     //tokenizes the input string
+        StringBuilder builder = new StringBuilder("");
+        for(String s : tokens){
+            if(isWhitelisted(s) && isMention(s,'+') == false){      //if the word is whitelisted and its not a 'Google Plus' mention
+                builder.append(" ").append(s);
+            }
+        }
+        return finalizeText(builder.toString());
     }
 
     /**
@@ -42,8 +48,8 @@ public class Preprocessor {
      * @param str
      * @return
      */
-    private static boolean isWhitelisted(String str){
-        if (isMention(str) == false && isStopWord(str) == false && isNumeric(str) == false && isURL(str) == false){
+    public static boolean isWhitelisted(String str){
+        if ( isStopWord(str) == false && isNumeric(str) == false && isURL(str) == false){
             return true;
         }
         else{
@@ -51,11 +57,18 @@ public class Preprocessor {
         }
     }
 
-    private static Boolean isMention(String str){
-        if(str.charAt(0) == '@' )
+    public static Boolean isMention(String str,char mentionChar){
+        if (str.length()==0){
             return true;
-        else
-            return false;
+        }
+        else{
+            if(str.charAt(0) == mentionChar )
+                return true;
+            else
+                return false;
+
+        }
+
     }
 
 
