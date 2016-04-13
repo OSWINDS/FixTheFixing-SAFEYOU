@@ -25,7 +25,9 @@ public class Preprocessor {
                 output = output + s;
             }
         }
-        return toLowerCase(output);
+
+        output = finalizeText(output);
+        return output;
     }
 
     //Processor of youtube comments
@@ -40,17 +42,16 @@ public class Preprocessor {
      * @param str
      * @return
      */
-    public static boolean isWhitelisted(String str){
+    private static boolean isWhitelisted(String str){
         if (isMention(str) == false && isStopWord(str) == false && isNumeric(str) == false && isURL(str) == false){
             return true;
         }
         else{
             return false;
         }
-
     }
 
-    public static Boolean isMention(String str){
+    private static Boolean isMention(String str){
         if(str.charAt(0) == '@' )
             return true;
         else
@@ -58,7 +59,7 @@ public class Preprocessor {
     }
 
 
-    public static boolean isURL(String str){
+    private static boolean isURL(String str){
         try{
             URL url = new URL(str);
             return true;
@@ -68,29 +69,50 @@ public class Preprocessor {
         }
     }
 
-    public static boolean isNumeric(String str){
-        if (str.matches("[-+]?\\d*\\.?\\d+"))
+    private static boolean isNumeric(String str){
+        if (str.matches(".*\\d.*")) //Old: str.matches("[-+]?\\d*\\.?\\d+")
             return true;
         else
             return false;
     }
 
-    public static boolean isStopWord(String str){
+    private static boolean isStopWord(String str){
         if(stopwordsList.contains(str))
             return true;
         else
             return false;
     }
-    public static String[] tokenizer(String input){
+    private static String[] tokenizer(String input){
         return input.split(" ");
     }
 
-    public static String toLowerCase(String input){
+    private static String toLowerCase(String input){
         return input.toLowerCase();
-
     }
 
-    public static void removePunctuation(){
-        //antigone
+    private static String removePunctuation(String input){
+        input = input.replaceAll("[.,:;()\\[\\]{}?_\\-!\'*\"@#$%^&+=|~`><]", " ");
+        input = input.replaceAll("\\s+"," ");
+        input = input.trim();
+
+        return input;
     }
+
+    private static String removeSingleCharacter(String input){
+        input = input.replaceAll("\\s[a-z]\\s", " ");
+        input = input.replaceAll("\\s+"," ");
+        input = input.trim();
+
+        return input;
+    }
+
+    //Removes useless characters like punctuation and single characters and transforms to lowercase
+    private static String finalizeText(String input){
+        input = toLowerCase(input);
+        input = removePunctuation(input);
+        input = removeSingleCharacter(input);
+
+        return input;
+    }
+
 }
