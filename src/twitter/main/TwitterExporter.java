@@ -5,6 +5,7 @@ package twitter.main;
  * Created by gogopavl on 30/3/2016.
  */
 
+import combiner.Preprocessor;
 import mongo.MongoConnector;
 import twitter.manager.TweetManager;
 import twitter.manager.TwitterCriteria;
@@ -87,9 +88,14 @@ public class TwitterExporter {
                             .add("geo", t.getGeo())
                             .add("permalink",t.getPermalink())
                             .build();
+                    //preprocessing test
+                    /*
+                    System.out.println("before preprocessing: "+t.getText());
+                    System.out.println("after preprocessing: " + Preprocessor.preprocessTweet(t.getText()));
+                    */
+
                     //Add "value" to mongo
                     //System.out.println("JSON: "+value.toString());
-
                     mc.addTweet(value.toString());
                 }
 

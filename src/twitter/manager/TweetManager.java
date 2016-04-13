@@ -96,7 +96,6 @@ public class TweetManager {
                     long dateMs = Long.valueOf(tweet.select("small.time span.js-short-timestamp").attr("data-time-ms"));
                     String id = tweet.attr("data-tweet-id");
                     String permalink = tweet.attr("data-permalink-path");
-
                     String geo = "";
                     Elements geoElement = tweet.select("span.Tweet-geo");
                     if (geoElement.size() > 0) {
