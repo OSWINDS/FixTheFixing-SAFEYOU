@@ -13,7 +13,7 @@ public class YoutubeExporter {
         ArrayList<JsonObject> jsons = ytCommentsCollector.collectComments();
         for(JsonObject json : jsons){
             String comment = json.getString("comment");     //gets the comment field
-            String preprocessed = Preprocessor.preprocessComment(comment);
+            //String preprocessed = Preprocessor.preprocessComment(comment);
             //PREPROCESSED TEXT SHOULD BE SAVEN INSIDE MONGOCONNECTOR (SOFIA)
         }
         MongoConnector mc = new MongoConnector("localhost", 27017, "djokovic");

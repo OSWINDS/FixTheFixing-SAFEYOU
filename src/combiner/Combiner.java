@@ -11,8 +11,10 @@ public class Combiner {
     public static void main(String[] args) {
         // Collect Youtube comments and insert them to DB
         YoutubeExporter.main(null);
+        Preprocessor.preprocessComments();
 
         // Collect tweets and insert them to DB
         TwitterExporter.main(args);
+        Preprocessor.preprocessTweets();
     }
 }

@@ -6,6 +6,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.json.JSONObject;
+
+import java.util.*;
 
 /**
  * Custom class that connects to MongoDB and inserts, edits and deletes documents
@@ -68,24 +71,22 @@ public class MongoConnector {
     }
 
     /**
-     * Searches in the data base for the tweet with ID UUID and changes the parsed text field with
-     * the given
-     * @param UUID The UUID of the document that we want to change
-     * @param parsedText the text that we want to put in the field
-     * @return if the text successfully changed
+     * Generalised function to insert parsed text to database
+     * @param UUID The document's id
+     * @param parsed The parsed text to be inserted
+     * @param col The collection
+     * @param field
+     * @return
      */
-    public boolean insertParsedTweet(ObjectId UUID, String parsedText) {
-
-        /* Get db and document */
-        MongoCollection<Document> tweets = _db.getCollection(_coll_name_twitter);
-        FindIterable<Document> iterable = tweets.find(new Document(_COLL_INDEX_, UUID));
+    private boolean insertParsed(ObjectId UUID, String parsed, MongoCollection<Document> col, String field) {
+        FindIterable<Document> iterable = col.find(new Document(_COLL_INDEX_, UUID));
 
         Document document = iterable.first();
 
         if (document != null) {
             /* Document exist*/
-            if (document.replace(_TWEET_PARSED_STRING_, null, parsedText)) {
-                tweets.replaceOne(new Document(_COLL_INDEX_, UUID), document).getMatchedCount();
+            if (document.replace(field, null, parsed)) {
+                col.replaceOne(new Document(_COLL_INDEX_, UUID), document).getMatchedCount();
                 //printMongo("Replaced OK -> " + UUID);
                 return true;
 
@@ -97,6 +98,57 @@ public class MongoConnector {
 
         errorMongo("Document " + UUID + " doesn't exist here!");
         return false;
+    }
+
+    /**
+     * Searches in the data base for the Youtube comment with ID UUID and changes the parsed text field with
+     * the given one
+     * @param UUID The UUID of the document that we want to change
+     * @param parsedComment the comment that we want to put in the field
+     * @return True, if the text successfully changed, false otherwise
+     */
+    public boolean insertParsedComment(ObjectId UUID, String parsedComment) {
+        /* Get db and document */
+        MongoCollection<Document> comments = _db_youtube.getCollection(_coll_name_youtube);
+        return insertParsed(UUID, parsedComment, comments, _COMMENT_PARSED_STRING_);
+    }
+
+    /**
+     * Searches in the data base for the tweet with ID UUID and changes the parsed text field with
+     * the given
+     * @param UUID The UUID of the document that we want to change
+     * @param parsedText the text that we want to put in the field
+     * @return True, if the text successfully changed, false otherwise
+     */
+    public boolean insertParsedTweet(ObjectId UUID, String parsedText) {
+
+        /* Get db and document */
+        MongoCollection<Document> tweets = _db.getCollection(_coll_name_twitter);
+        return insertParsed(UUID, parsedText, tweets, _TWEET_PARSED_STRING_);
+    }
+
+    public HashMap<ObjectId,JSONObject> getTweets() {
+        MongoCollection<Document> tweetsCollection = _db.getCollection(_coll_name_twitter);
+        return getDocuments(tweetsCollection,_TWEET_JSON_);
+    }
+
+    public HashMap<ObjectId,JSONObject> getComments() {
+        MongoCollection<Document> commentsCollection = _db_youtube.getCollection(_coll_name_youtube);
+        return getDocuments(commentsCollection,_COMMENT_JSON_);
+    }
+
+    private HashMap<ObjectId,JSONObject> getDocuments(MongoCollection<Document> col, String field) {
+        FindIterable<Document> iterable = col.find();
+
+        HashMap<ObjectId,JSONObject> docs = new HashMap<>();
+
+        for (Document doc: iterable) {
+            ObjectId id = doc.getObjectId(_COLL_INDEX_);
+            Document document = (Document) doc.get(field);
+            JSONObject json = new JSONObject(document);
+            docs.put(id,json);
+        }
+        return docs;
     }
 
     /**
