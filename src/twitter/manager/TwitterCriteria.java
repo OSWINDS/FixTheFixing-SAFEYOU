@@ -95,5 +95,4 @@ public class TwitterCriteria {
     int getMaxTweets() {
         return maxTweets;
     }
-
 }

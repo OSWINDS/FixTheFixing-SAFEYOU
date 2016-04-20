@@ -20,7 +20,8 @@ public class TwitterExporter {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
     private static JsonBuilderFactory factory = Json.createBuilderFactory(null);
-    private static MongoConnector mc = new MongoConnector("localhost", 27017, "djokovic");
+    private static MongoConnector mc;
+    private static String databaseName;
 
     public static void main(String[] args) throws JSONException {
         if (args == null || args.length == 0) {
@@ -62,6 +63,8 @@ public class TwitterExporter {
                     criteria.setQuerySearch(parameterSplit[1]);
                 } else if (parameterSplit[0].equals("maxtweets")) {
                     criteria.setMaxTweets(Integer.valueOf(parameterSplit[1]));
+                } else if (parameterSplit[0].equals("theme")) {
+                    databaseName = parameterSplit[1];
                 }
             }
 
@@ -71,6 +74,7 @@ public class TwitterExporter {
                 //bw.newLine();
 
                 System.out.println("Obtaining tweets... \n");
+                mc = new MongoConnector("localhost", 27017, databaseName);
 
                 for (Tweet t : TweetManager.getTweets(criteria)) {
                     //bw.write(String.format("%s;%s;%d;%d;\"%s\";%s;%s;%s;\"%s\";%s", t.getUsername(), sdf.format(t.getDate()), t.getRetweets(), t.getFavorites(), t.getText(), t.getGeo(), t.getMentions(), t.getHashtags(), t.getId(), t.getPermalink()));

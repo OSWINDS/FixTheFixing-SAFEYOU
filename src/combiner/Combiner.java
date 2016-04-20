@@ -14,13 +14,15 @@ public class Combiner {
      * @param args Arguments neeeded for Twitter search
      */
     public static void main(String[] args) throws JSONException {
-        // Collect Youtube comments and insert them to DB
-        YoutubeExporter.main(null);
-        Preprocessor.preprocessComments();
 
-        // Collect tweets and insert them to DB
-        TwitterExporter.main(args);
-        Preprocessor.preprocessTweets();
+        if(args != null) {
+            // Collect Youtube comments and insert them to DB
+            YoutubeExporter.main(args);
+            Preprocessor.preprocessComments(args[4].split("=")[1]);
 
+            // Collect tweets and insert them to DB
+            TwitterExporter.main(args);
+            Preprocessor.preprocessTweets(args[4].split("=")[1]);
+        }
     }
 }

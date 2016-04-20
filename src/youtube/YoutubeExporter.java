@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 public class YoutubeExporter {
 
+    private static String databaseName;
+
     public static void main(String args[]){
         YTCommentsCollector ytCommentsCollector = new YTCommentsCollector();
         ArrayList<JsonObject> jsons = ytCommentsCollector.collectComments();
@@ -16,7 +18,15 @@ public class YoutubeExporter {
             //String preprocessed = Preprocessor.preprocessComment(comment);
             //PREPROCESSED TEXT SHOULD BE SAVEN INSIDE MONGOCONNECTOR (SOFIA)
         }
-        MongoConnector mc = new MongoConnector("localhost", 27017, "djokovic");
+
+        for (String parameter : args) {
+            String[] parameterSplit = parameter.split("=");
+
+            if (parameterSplit[0].equals("theme")) {
+                databaseName = parameterSplit[1];
+            }
+        }
+        MongoConnector mc = new MongoConnector("localhost", 27017, databaseName);
         for(JsonObject json:jsons) {
             mc.addYoutubeComment(json.toString());
         }
