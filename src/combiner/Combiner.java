@@ -21,5 +21,6 @@ public class Combiner {
         // Collect tweets and insert them to DB
         TwitterExporter.main(args);
         Preprocessor.preprocessTweets();
+
     }
 }
