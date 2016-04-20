@@ -38,6 +38,7 @@ public class MongoConnector {
      * Connects to the given server:port to the database fixthefixing
      * @param host The host name of the server
      * @param port The port of the server
+     * @param _coll_name The name of the collection
      */
     public MongoConnector(String host, int port, String _coll_name) {
         MongoClient mongoClient = new MongoClient(host, port);

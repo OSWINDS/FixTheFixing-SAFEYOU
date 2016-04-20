@@ -30,7 +30,6 @@ import java.util.List;
  * Class responsible for collecting comments from youtube using the YouTube API
  *
  * @author Kostas Platis
- * @Date 21/3/2016
  *
  */
 public class YTCommentsCollector {
