@@ -56,7 +56,7 @@ public class MongoConnector {
         MongoCollection<Document> coll = _db.getCollection(_coll_name_twitter);
 
         JSONObject jsonObj = new JSONObject(json);
-        if(_db.getCollection(_coll_name_twitter).find(eq("tweet.user_id",jsonObj.getString("user_id"))).first() == null) {
+        if(_db.getCollection(_coll_name_twitter).find(eq("tweet.id",jsonObj.getString("id"))).first() == null) {
             Document doc = new Document(_TWEET_PARSED_STRING_, null)
                     .append(_TWEET_JSON_, Document.parse(json));
 

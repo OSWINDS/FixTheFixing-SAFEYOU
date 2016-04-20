@@ -77,7 +77,7 @@ public class TwitterExporter {
                     //bw.newLine();
 
                     JsonObject value = factory.createObjectBuilder()
-                            .add("user_id", t.getId())
+                            .add("id", t.getId())
                             .add("user_name", t.getUsername())
                             .add("date", sdf.format(t.getDate()))
                             .add("text", t.getText())
