@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
+ * Class to process text (tweets and comments)
  * Created by Antigoni Founta on 13/4/2016.
  */
 
@@ -54,10 +55,8 @@ public class Preprocessor {
         String[] temp = tokenizer(input);
         String output = "";
         for(String s : temp){
-            if(isWhitelisted(s) && isMention(s,'@') == false ){
-                if(output!=null){
-                    output = output + " ";
-                }
+            if(isWhitelisted(s) && !isMention(s, '@')){
+                output = output + " ";
                 output = output + s;
             }
         }
@@ -73,7 +72,7 @@ public class Preprocessor {
         String[] tokens = tokenizer(input);     //tokenizes the input string
         StringBuilder builder = new StringBuilder("");
         for(String s : tokens){
-            if(isWhitelisted(s) && isMention(s,'+') == false){      //if the word is whitelisted and its not a 'Google Plus' mention
+            if(isWhitelisted(s) && !isMention(s, '+')){      //if the word is whitelisted and its not a 'Google Plus' mention
                 builder.append(" ").append(s);
             }
         }
@@ -81,67 +80,87 @@ public class Preprocessor {
     }
 
     /**
-     * Method checking if a string is whitelisted
-     *
-     * A string is called whitelisted if it's not a stopword or a mentrion or a number or a url
-     * @param str
-     * @return
+     * Method checking if a string is white-listed
+     * A string is called white-listed if it's not a stop-word or a mention or a number or a URL
+     * @param str The string to be checked
+     * @return True if the string is white-listed, false otherwise
      */
     private static boolean isWhitelisted(String str){
-        if ( isStopWord(str) == false && isNumeric(str) == false && isURL(str) == false){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return !isStopWord(str) && !isNumeric(str) && !isURL(str);
     }
 
+    /**
+     * Checks whether a string contains mentions or not
+     * @param str The string to be checked
+     * @param mentionChar The mention identifying character
+     * @return True, if the string contains a mention, or false otherwise
+     */
     private static Boolean isMention(String str,char mentionChar){
         if (str.length()==0){
             return true;
         }
         else{
-            if(str.charAt(0) == mentionChar )
-                return true;
-            else
-                return false;
+            return str.charAt(0) == mentionChar;
 
         }
 
     }
 
-
+    /**
+     * Checks whether a string contains URLs or not
+     * @param str The string to be checked
+     * @return True, if the string contains a URL, or false otherwise
+     */
     private static boolean isURL(String str){
         try{
             URL url = new URL(str);
             return true;
-        }
-        catch (MalformedURLException e){
+        } catch (MalformedURLException e){
             return false;
         }
     }
 
+    /**
+     * Check whether a string contains numeric characters or not
+     * @param str The string to be checked
+     * @return True, if the string contains numeric characters, or false otherwise
+     */
     private static boolean isNumeric(String str){
-        if (str.matches(".*\\d.*")) //Old: str.matches("[-+]?\\d*\\.?\\d+")
-            return true;
-        else
-            return false;
+        return str.matches(".*\\d.*");
     }
 
+    /**
+     * Check whether a string contains stop-words or not
+     * @param str The string to be checked
+     * @return True, if the string contains stop-words, or false otherwise
+     */
     private static boolean isStopWord(String str){
-        if(stopwordsList.contains(str))
-            return true;
-        else
-            return false;
+        return stopwordsList.contains(str);
     }
+
+    /**
+     * Separates string into words based on whitespaces
+     * @param input The string to be tokenized
+     * @return An array of the strings' words
+     */
     private static String[] tokenizer(String input){
         return input.split(" ");
     }
 
+    /**
+     * Converts all characters to lower case
+     * @param input The string to be turned into lower case
+     * @return The string converted to lower case
+     */
     private static String toLowerCase(String input){
         return input.toLowerCase();
     }
 
+    /**
+     * Removes all punctuation
+     * @param input The string to be stripped from punctuation
+     * @return The strig without punctuation
+     */
     private static String removePunctuation(String input){
         input = input.replaceAll("[.,:;()\\[\\]{}?_\\-!\'*\"@#$%^&+=|~`><]+", " ");
         input = input.replaceAll("\\s+"," ");
@@ -150,6 +169,11 @@ public class Preprocessor {
         return input;
     }
 
+    /**
+     * Removes all single characters from a string
+     * @param input The string to be edited
+     * @return The string without punctuation
+     */
     private static String removeSingleCharacter(String input){
         input = input.replaceAll("\\s[a-z]\\s", " ");
         input = input.replaceAll("\\s+"," ");
@@ -158,7 +182,11 @@ public class Preprocessor {
         return input;
     }
 
-    //Removes useless characters like punctuation and single characters and transforms to lowercase
+    /**
+     * Removes useless characters like punctuation and single characters and transforms to lowercase
+     * @param input The string to be checked
+     * @return The string finalized
+     */
     private static String finalizeText(String input){
         input = toLowerCase(input);
         input = removePunctuation(input);

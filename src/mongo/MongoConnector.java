@@ -7,6 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.json.JSONObject;
+import static com.mongodb.client.model.Filters.*;
 
 import java.util.*;
 
@@ -51,10 +52,15 @@ public class MongoConnector {
     public void addTweet(String json) {
         MongoCollection<Document> coll = _db.getCollection(_coll_name_twitter);
 
-        Document doc = new Document(_TWEET_PARSED_STRING_, null)
-                .append(_TWEET_JSON_, Document.parse(json));
+        JSONObject jsonObj = new JSONObject(json);
+        if(_db.getCollection(_coll_name_twitter).find(eq("tweet.user_id",jsonObj.getString("user_id"))).first() == null) {
+            Document doc = new Document(_TWEET_PARSED_STRING_, null)
+                    .append(_TWEET_JSON_, Document.parse(json));
 
-        coll.insertOne(doc);
+            coll.insertOne(doc);
+        } else {
+            System.out.println("ALREADY IN!");
+        }
     }
 
     /**
@@ -63,7 +69,6 @@ public class MongoConnector {
      */
     public void addYoutubeComment(String json) {
         MongoCollection<Document> coll = _db_youtube.getCollection(_coll_name_youtube);
-
         Document doc = new Document(_COMMENT_PARSED_STRING_, null)
                 .append(_COMMENT_JSON_, Document.parse(json));
 
@@ -74,9 +79,9 @@ public class MongoConnector {
      * Generalised function to insert parsed text to database
      * @param UUID The document's id
      * @param parsed The parsed text to be inserted
-     * @param col The collection
-     * @param field
-     * @return
+     * @param col The collection for the insertion
+     * @param field The field to get
+     * @return Insert parsed text into database
      */
     private boolean insertParsed(ObjectId UUID, String parsed, MongoCollection<Document> col, String field) {
         FindIterable<Document> iterable = col.find(new Document(_COLL_INDEX_, UUID));
@@ -127,16 +132,30 @@ public class MongoConnector {
         return insertParsed(UUID, parsedText, tweets, _TWEET_PARSED_STRING_);
     }
 
+    /**
+     * Gets all tweets from twitter database
+     * @return Pairs of tweets' IDs and tweets' JSONs
+     */
     public HashMap<ObjectId,JSONObject> getTweets() {
         MongoCollection<Document> tweetsCollection = _db.getCollection(_coll_name_twitter);
         return getDocuments(tweetsCollection,_TWEET_JSON_);
     }
 
+    /**
+     * Gets all youtube comments from youtube database
+     * @return Pairs of comments' IDs and comments' JSONs
+     */
     public HashMap<ObjectId,JSONObject> getComments() {
         MongoCollection<Document> commentsCollection = _db_youtube.getCollection(_coll_name_youtube);
         return getDocuments(commentsCollection,_COMMENT_JSON_);
     }
 
+    /**
+     * Gets all documents from a collection
+     * @param col The name of the collection
+     * @param field The field we want to get
+     * @return Pairs of documents' IDs and JSONs
+     */
     private HashMap<ObjectId,JSONObject> getDocuments(MongoCollection<Document> col, String field) {
         FindIterable<Document> iterable = col.find();
 
@@ -158,14 +177,4 @@ public class MongoConnector {
     private void errorMongo(String str) {
         System.err.println(str);
     }
-
-    /**
-     * Example main function for connection to MongoDB
-     * @param args
-     */
-    /*public static void main(String[] args) {
-        MongoConnector mongoConnector = new MongoConnector("localhost", 27017, "djokovic");
-        // Test insertion
-        mongoConnector.addTweet("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
-    }*/
 }

@@ -8,6 +8,10 @@ import youtube.YoutubeExporter;
  * Created by Sofia on 4/5/2016.
  */
 public class Combiner {
+    /**
+     * Main class to run the project
+     * @param args Arguments neeeded for Twitter search
+     */
     public static void main(String[] args) {
         // Collect Youtube comments and insert them to DB
         YoutubeExporter.main(null);
