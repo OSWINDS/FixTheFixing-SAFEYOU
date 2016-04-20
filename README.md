@@ -12,4 +12,4 @@ Fix the Fixing EU project code
 org.mongodb:mongodb-driver:3.2.2
 
 ###Example Arguments for Twitter
-querysearch="(Djokovic OR Novak) fixing" since=2016-01-18 until=2016-01-30 maxtweets=1000
+querysearch="(Djokovic OR Novak) fixing" since=2016-01-18 until=2016-01-30 maxtweets=1000 theme="djokovic"
