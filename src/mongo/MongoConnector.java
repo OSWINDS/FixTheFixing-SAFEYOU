@@ -6,10 +6,12 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.json.JSONException;
 import org.json.JSONObject;
-import static com.mongodb.client.model.Filters.*;
 
-import java.util.*;
+import java.util.HashMap;
+
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Custom class that connects to MongoDB and inserts, edits and deletes documents
@@ -50,7 +52,7 @@ public class MongoConnector {
      * Inserts tweet to tweets collection
      * @param json The tweet's JSON
      */
-    public void addTweet(String json) {
+    public void addTweet(String json) throws JSONException {
         MongoCollection<Document> coll = _db.getCollection(_coll_name_twitter);
 
         JSONObject jsonObj = new JSONObject(json);

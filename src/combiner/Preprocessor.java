@@ -2,6 +2,7 @@ package combiner;
 
 import mongo.MongoConnector;
 import org.bson.types.ObjectId;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
@@ -23,7 +24,7 @@ public class Preprocessor {
     /**
      * Processes all the comments' text
      */
-    public static void preprocessComments() {
+    public static void preprocessComments() throws JSONException {
         HashMap<ObjectId,JSONObject> comments = mc.getComments();
         String parsedComment;
         for(ObjectId id : comments.keySet()) {
@@ -36,7 +37,7 @@ public class Preprocessor {
     /**
      * Processes all the tweets' text
      */
-    public static void preprocessTweets() {
+    public static void preprocessTweets() throws JSONException {
         HashMap<ObjectId,JSONObject> tweets = mc.getTweets();
         String parsedTweet;
         for(ObjectId id : tweets.keySet()) {
