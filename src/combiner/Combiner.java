@@ -1,5 +1,6 @@
 package combiner;
 
+import org.json.JSONException;
 import twitter.main.TwitterExporter;
 import youtube.YoutubeExporter;
 
@@ -12,7 +13,7 @@ public class Combiner {
      * Main class to run the project
      * @param args Arguments neeeded for Twitter search
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JSONException {
         // Collect Youtube comments and insert them to DB
         YoutubeExporter.main(null);
         Preprocessor.preprocessComments();

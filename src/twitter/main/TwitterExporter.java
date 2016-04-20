@@ -5,8 +5,8 @@ package twitter.main;
  * Created by gogopavl on 30/3/2016.
  */
 
-import combiner.Preprocessor;
 import mongo.MongoConnector;
+import org.json.JSONException;
 import twitter.manager.TweetManager;
 import twitter.manager.TwitterCriteria;
 import twitter.model.Tweet;
@@ -22,7 +22,7 @@ public class TwitterExporter {
     private static JsonBuilderFactory factory = Json.createBuilderFactory(null);
     private static MongoConnector mc = new MongoConnector("localhost", 27017, "djokovic");
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JSONException {
         if (args == null || args.length == 0) {
             System.err.println("You must pass some parameters. Use \"-h\" to help.");
             System.exit(0);

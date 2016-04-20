@@ -181,7 +181,6 @@ public class YTCommentsCollector {
         return details;
     }
 
-
         /**
      * Method responsible for fetching video ids from the videoIDs.txt file
      *
