@@ -41,12 +41,12 @@ public class YTCommentsCollector {
 
 
 
-    public ArrayList<JsonObject> collectComments() {
+    public ArrayList<JsonObject> collectComments(String filenameArgument) {
 
         System.out.println("Started collecting comments...");
 
         List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.force-ssl");
-        ArrayList<String> videoIDs = fetchVideoIds();   //fetching the videoIDs
+        ArrayList<String> videoIDs = fetchVideoIds(filenameArgument);   //fetching the videoIDs
         ArrayList<JsonObject> jsons = new ArrayList<>();
 
         try {
@@ -185,9 +185,9 @@ public class YTCommentsCollector {
      *
      * @return a list with the
      */
-    private ArrayList<String> fetchVideoIds(){
+    private ArrayList<String> fetchVideoIds(String filenameArgument){
 
-        String filename = "./resources/DjokovicVideoIDs.txt";
+        String filename = "./resources/"+filenameArgument+".txt";
 
         ArrayList<String> videoIDs = new ArrayList<>();
 

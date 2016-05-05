@@ -12,7 +12,7 @@ public class YoutubeExporter {
 
     public static void main(String args[]){
         YTCommentsCollector ytCommentsCollector = new YTCommentsCollector();
-        ArrayList<JsonObject> jsons = ytCommentsCollector.collectComments();
+        ArrayList<JsonObject> jsons = ytCommentsCollector.collectComments(args[4].split("=")[1]);
         for(JsonObject json : jsons){
             String comment = json.getString("comment");     //gets the comment field
             //String preprocessed = Preprocessor.preprocessComment(comment);
