@@ -18,14 +18,18 @@ public class Combiner {
     private static FrequencyCounter fc = new FrequencyCounter();
 
     public static void main(String[] args) throws JSONException, IOException {
-        // Collect Youtube comments and insert them to DB
-        YoutubeExporter.main(null);
-        Preprocessor.preprocessComments(fc);
 
-        // Collect tweets and insert them to DB
-        TwitterExporter.main(args);
-        Preprocessor.preprocessTweets(fc);
+        if(args != null) {
+            // Collect Youtube comments and insert them to DB
+//            YoutubeExporter.main(args);
+//            Preprocessor.preprocessComments(args[4].split("=")[1], fc);
 
+
+            // Collect tweets and insert them to DB
+            TwitterExporter.main(args);
+            Preprocessor.preprocessTweets(args[4].split("=")[1], fc);
+
+        }
         fc.exportFrequencies();//creates frequencies.txt - sorted alphabetically
         fc.exportFrequenciesByValue();//creates frequenciesByValue.txt - sorted by frequencies (descending order)
 
