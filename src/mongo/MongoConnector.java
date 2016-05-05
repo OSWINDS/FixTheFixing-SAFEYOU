@@ -145,12 +145,49 @@ public class MongoConnector {
     }
 
     /**
+     * Gets all parsed tweets from twitter database
+     * @return Pairs of tweets' IDs and tweets' parsed text
+     */
+    public HashMap<ObjectId, String> getParsedTweets() {
+        MongoCollection<Document> parsedTweetsCollection = _db.getCollection(_coll_name_twitter);
+        return getParsed(parsedTweetsCollection, _TWEET_PARSED_STRING_);
+    }
+
+    /**
      * Gets all youtube comments from youtube database
      * @return Pairs of comments' IDs and comments' JSONs
      */
     public HashMap<ObjectId,JSONObject> getComments() {
         MongoCollection<Document> commentsCollection = _db_youtube.getCollection(_coll_name_youtube);
         return getDocuments(commentsCollection,_COMMENT_JSON_);
+    }
+
+    /**
+     * Gets all youtube comments' parsed text
+     * @return Pairs of comments' IDs and comments' parsed texts
+     */
+    public HashMap<ObjectId,String> getParsedComments() {
+        MongoCollection<Document> parsedCollection = _db_youtube.getCollection(_coll_name_youtube);
+        return getParsed(parsedCollection,_COMMENT_PARSED_STRING_);
+    }
+
+    /**
+     * Gets all documents' parsed strings from a collection
+     * @param col The name of the collection
+     * @param field The field we want to get
+     * @return Pairs of documents' IDs and parsed texts
+     */
+    private HashMap<ObjectId, String> getParsed(MongoCollection<Document> col, String field) {
+        FindIterable<Document> iterable = col.find();
+
+        HashMap<ObjectId,String> docs = new HashMap<>();
+
+        for (Document doc: iterable) {
+            ObjectId id = doc.getObjectId(_COLL_INDEX_);
+            String parsed = (String) doc.get(field);
+            docs.put(id,parsed);
+        }
+        return docs;
     }
 
     /**

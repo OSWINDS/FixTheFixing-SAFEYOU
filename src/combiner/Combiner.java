@@ -13,7 +13,7 @@ import java.io.IOException;
 public class Combiner {
     /**
      * Main class to run the project
-     * @param args Arguments neeeded for Twitter search
+     * @param args Arguments needed for Twitter search
      */
     private static FrequencyCounter fc = new FrequencyCounter();
 

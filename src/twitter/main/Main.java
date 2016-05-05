@@ -1,6 +1,7 @@
 package twitter.main;
 
 /**
+ * Example class
  * Created by gogopavl on 30/3/2016.
  */
 
