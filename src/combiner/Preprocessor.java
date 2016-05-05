@@ -1,5 +1,6 @@
 package combiner;
 
+import analytics.FrequencyCounter;
 import mongo.MongoConnector;
 import org.bson.types.ObjectId;
 import org.json.JSONException;
@@ -23,8 +24,8 @@ public class Preprocessor {
     /**
      * Processes all the comments' text
      */
-    public static void preprocessComments(String databaseName, FrequencyCounter fc) throws JSONException {
-        mc = new MongoConnector("localhost", 27017, databaseName);
+    public static void preprocessComments(String collectionName, FrequencyCounter fc) throws JSONException {
+        mc = new MongoConnector("localhost", 27017, collectionName);
         HashMap<ObjectId,JSONObject> comments = mc.getComments();
         String parsedComment;
         for(ObjectId id : comments.keySet()) {
@@ -38,8 +39,8 @@ public class Preprocessor {
     /**
      * Processes all the tweets' text
      */
-    public static void preprocessTweets(String databaseName, FrequencyCounter fc) throws JSONException {
-        mc = new MongoConnector("localhost", 27017, databaseName);
+    public static void preprocessTweets(String collectionName, FrequencyCounter fc) throws JSONException {
+        mc = new MongoConnector("localhost", 27017, collectionName);
         HashMap<ObjectId,JSONObject> tweets = mc.getTweets();
         String parsedTweet;
         for(ObjectId id : tweets.keySet()) {
@@ -100,12 +101,11 @@ public class Preprocessor {
      * @return True, if the string contains a mention, or false otherwise
      */
     private static Boolean isMention(String str,char mentionChar){
-        if (str.length()==0){
+        if (str.length()==0) {
             return true;
         }
-        else{
+        else {
             return str.charAt(0) == mentionChar;
-
         }
 
     }
@@ -116,7 +116,7 @@ public class Preprocessor {
      * @return True, if the string contains a URL, or false otherwise
      */
     private static boolean isURL(String str){
-        try{
+        try {
             URL url = new URL(str);
             return true;
         } catch (MalformedURLException e){

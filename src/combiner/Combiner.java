@@ -1,5 +1,7 @@
 package combiner;
 
+import analytics.AnalyticsExtractor;
+import analytics.FrequencyCounter;
 import org.json.JSONException;
 import twitter.main.TwitterExporter;
 import youtube.YoutubeExporter;
@@ -30,9 +32,12 @@ public class Combiner {
             Preprocessor.preprocessTweets(args[4].split("=")[1], fc);
 
         }
-        fc.exportFrequencies();//creates frequencies.txt - sorted alphabetically
-        fc.exportFrequenciesByValue();//creates frequenciesByValue.txt - sorted by frequencies (descending order)
+        fc.exportFrequencies(); //creates frequencies.txt - sorted alphabetically
+        fc.exportFrequenciesByValue(); //creates frequenciesByValue.txt - sorted by frequencies (descending order)
 
-
+        AnalyticsExtractor analyticsExtractor = new AnalyticsExtractor(args[4].split("=")[1]);
+        analyticsExtractor.getHashtagFrequencies();
+        analyticsExtractor.getTwitterMentionFrequencies();
+        analyticsExtractor.getLocationFrequencies();
     }
 }

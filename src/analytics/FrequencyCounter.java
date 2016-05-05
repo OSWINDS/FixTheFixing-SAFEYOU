@@ -1,4 +1,4 @@
-package combiner;
+package analytics;
 
 import java.io.BufferedWriter;
 import java.io.File;
