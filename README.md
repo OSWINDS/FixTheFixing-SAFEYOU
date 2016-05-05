@@ -13,3 +13,7 @@ org.mongodb:mongodb-driver:3.2.2
 
 ###Example Arguments for Twitter
 querysearch="(Djokovic OR Novak) fixing" since=2016-01-18 until=2016-01-30 maxtweets=1000 theme="djokovic"
+
+###Search query for Mongo Explorer (Ctrl+F in IntelliJ)
+For instance, if I'm looking for a tweet created at 2016/01/28 I'd type
+in the filter text box: {'tweet.date':'2016/01/28'} , which typically follows a JSON format.
