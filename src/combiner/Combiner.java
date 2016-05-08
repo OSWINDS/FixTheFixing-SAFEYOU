@@ -13,12 +13,14 @@ import java.io.IOException;
  * Created by Sofia on 4/5/2016.
  */
 public class Combiner {
+
+    private static FrequencyCounter fc = new FrequencyCounter();
+    private static AnalyticsExtractor analyticsExtractor;
+
     /**
      * Main class to run the project
      * @param args Arguments needed for Twitter search
      */
-    private static FrequencyCounter fc = new FrequencyCounter();
-
     public static void main(String[] args) throws JSONException, IOException {
 
         if(args != null) {
@@ -31,13 +33,16 @@ public class Combiner {
             TwitterExporter.main(args);
             Preprocessor.preprocessTweets(args[4].split("=")[1], fc);
 
-        }
-        fc.exportFrequencies(); //creates frequencies.txt - sorted alphabetically
-        fc.exportFrequenciesByValue(); //creates frequenciesByValue.txt - sorted by frequencies (descending order)
+            fc.exportFrequencies(); //creates frequencies.txt - sorted alphabetically
+            fc.exportFrequenciesByValue(); //creates frequenciesByValue.txt - sorted by frequencies (descending order)
 
-        AnalyticsExtractor analyticsExtractor = new AnalyticsExtractor(args[4].split("=")[1]);
-        analyticsExtractor.getHashtagFrequencies();
-        analyticsExtractor.getTwitterMentionFrequencies();
-        analyticsExtractor.getLocationFrequencies();
+            if(args.length >= 5) {
+                analyticsExtractor = new AnalyticsExtractor(args[4].split("=")[1]);
+                analyticsExtractor.getHashtagFrequencies();
+                analyticsExtractor.getTwitterMentionFrequencies();
+                analyticsExtractor.getLocationFrequencies();
+                analyticsExtractor.getDateFrequencies();
+            }
+        }
     }
 }

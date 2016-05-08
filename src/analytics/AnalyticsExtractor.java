@@ -2,6 +2,7 @@ package analytics;
 
 import mongo.MongoConnector;
 import org.bson.types.ObjectId;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.StringJoiner;
 
 /**
+ * Class to produce the analytics
  * Created by sifantid on 5/5/2016.
  */
 public class AnalyticsExtractor {
@@ -23,16 +25,20 @@ public class AnalyticsExtractor {
     }
 
     public void getHashtagFrequencies() {
-        writeToTagcloudFile(calculateFrequencies("hashtags","twitter"),"hashtag_frequencies.txt");
+        writeToTagcloudFile(calculateFrequencies("hashtags","twitter"),"hashtag_frequencies_twitter.txt");
     }
 
     public void getTwitterMentionFrequencies() {
-        writeToTagcloudFile(calculateFrequencies("mentions","twitter"),"mentions_frequencies.txt");
+        writeToTagcloudFile(calculateFrequencies("mentions","twitter"),"mentions_frequencies_twitter.txt");
     }
 
     public void getLocationFrequencies() {
-        writeToTagcloudFile(calculateFrequenciesSimple("geo","twitter"),"location_frequencies.txt");
+        writeToTagcloudFile(calculateFrequenciesSimple("geo","twitter"),"location_frequencies_twitter.txt");
         writeToTagcloudFile(calculateFrequenciesSimple("location","youtube"),"location_frequencies_youtube.txt");
+    }
+
+    public void getDateFrequencies() {
+        writeToTagcloudFile(calculateFrequenciesSimple("date","twitter"),"date_frequencies_twitter.txt");
     }
 
     private HashMap<String,Integer> calculateFrequenciesSimple(String field, String medium) {
@@ -45,8 +51,13 @@ public class AnalyticsExtractor {
         }
 
         for(JSONObject tweet_comment : tweets_comments.values()) {
-            String key = tweet_comment.getString(field);
-            if(!key.isEmpty()) {
+            String key = null;
+            try {
+                key = tweet_comment.getString(field);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if(key != null && !key.isEmpty()) {
                 frequencies.putIfAbsent(key, 0);
                 frequencies.computeIfPresent(key, (k, v) -> v + 1);
             }
@@ -69,7 +80,12 @@ public class AnalyticsExtractor {
         }
 
         for(JSONObject tweet_comment : tweets_comments.values()) {
-            String[] fieldValues = tweet_comment.getString(field).split(" ");
+            String[] fieldValues = new String[0];
+            try {
+                fieldValues = tweet_comment.getString(field).split(" ");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             if(!fieldValues[0].isEmpty()) {
                 for (String fieldValue : fieldValues) {
                     frequencies.putIfAbsent(fieldValue, 0);
@@ -89,10 +105,6 @@ public class AnalyticsExtractor {
                 writer.write(key + " , " + map.get(s));
                 writer.write(System.lineSeparator());
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

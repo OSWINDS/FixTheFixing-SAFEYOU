@@ -63,7 +63,7 @@ public class FrequencyCounter {
         for(Map.Entry<String, Integer> entry : frequenciesList.entrySet()) {
 
             // Creating a string with key and value
-            line = entry.getKey() + " " + entry.getValue();
+            line = entry.getKey() + " , " + entry.getValue();
 
             // Write line in file
             bw.write(line);
@@ -96,7 +96,7 @@ public class FrequencyCounter {
         for(Map.Entry<String, Integer> entry : sortByValues(frequenciesList).entrySet()) {
 
             // Creating a string with key and value
-            line = entry.getKey() + " " + entry.getValue();
+            line = entry.getKey() + " , " + entry.getValue();
 
             // Write line in file
             bw.write(line);
@@ -110,14 +110,12 @@ public class FrequencyCounter {
      * Sorts a given map by its values
      */
     public static <K, V extends Comparable<V>> Map<K, V> sortByValues(final Map<K, V> map) {
-        Comparator<K> valueComparator =  new Comparator<K>() {
-            public int compare(K k1, K k2) {
-                int compare = map.get(k2).compareTo(map.get(k1));
-                if (compare == 0) return 1;
-                else return compare;
-            }
+        Comparator<K> valueComparator = (k1, k2) -> {
+            int compare = map.get(k2).compareTo(map.get(k1));
+            if (compare == 0) return 1;
+            else return compare;
         };
-        Map<K, V> sortedByValues = new TreeMap<K, V>(valueComparator);
+        Map<K, V> sortedByValues = new TreeMap<>(valueComparator);
         sortedByValues.putAll(map);
         return sortedByValues;
     }
