@@ -15,6 +15,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Custom class that connects to MongoDB and inserts, edits and deletes documents
+ * Created by sifantid on 10/3/2016.
  */
 public class MongoConnector {
 
@@ -51,6 +52,7 @@ public class MongoConnector {
     /**
      * Inserts tweet to tweets collection
      * @param json The tweet's JSON
+     * @throws JSONException
      */
     public void addTweet(String json) throws JSONException {
         MongoCollection<Document> coll = _db.getCollection(_coll_name_twitter);

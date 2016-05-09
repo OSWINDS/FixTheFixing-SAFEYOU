@@ -19,7 +19,9 @@ public class Combiner {
 
     /**
      * Main class to run the project
-     * @param args Arguments needed for Twitter search
+     * @param args Arguments needed for Twitter search and tweets and comments storage
+     * @throws JSONException
+     * @throws IOException
      */
     public static void main(String[] args) throws JSONException, IOException {
 
@@ -38,10 +40,7 @@ public class Combiner {
 
             if(args.length >= 5) {
                 analyticsExtractor = new AnalyticsExtractor(args[4].split("=")[1]);
-                analyticsExtractor.getHashtagFrequencies();
-                analyticsExtractor.getTwitterMentionFrequencies();
-                analyticsExtractor.getLocationFrequencies();
-                analyticsExtractor.getDateFrequencies();
+                analyticsExtractor.analyze();
             }
         }
     }

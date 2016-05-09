@@ -26,6 +26,7 @@ public class FrequencyCounter {
     /**
      * Given any string, this function tokenizes it and adds each unique term to the
      * frequencies list (treemap). If it already exists, it only updates its value.
+     * @param text The text to be tokenized and inserted into the map
      */
     public void insert(String text){
         StringTokenizer tokenizer = new StringTokenizer(text, " .,;:!*^/");
@@ -44,6 +45,7 @@ public class FrequencyCounter {
     /**
      * Function that exports the treemap to a file with the following format:
      * "term frequency". For example: "example 18"
+     * @throws IOException
      */
     public void exportFrequencies() throws IOException {
 
@@ -79,6 +81,7 @@ public class FrequencyCounter {
      * Function that exports the treemap to a file with the following format:
      * "term frequency". For example: "example 18" in a descending order
      * (based on word frequency)
+     * @throws IOException
      */
     public void exportFrequenciesByValue() throws IOException {
         File dir = new File("frequenciesOutput");
@@ -108,6 +111,10 @@ public class FrequencyCounter {
     }
     /**
      * Sorts a given map by its values
+     * @param <K> The key type
+     * @param <V> The value type
+     * @param map The map to be sorted
+     * @return The sorted map
      */
     public static <K, V extends Comparable<V>> Map<K, V> sortByValues(final Map<K, V> map) {
         Comparator<K> valueComparator = (k1, k2) -> {

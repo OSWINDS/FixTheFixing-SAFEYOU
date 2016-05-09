@@ -24,23 +24,55 @@ public class AnalyticsExtractor {
         mc = new MongoConnector("localhost", 27017, collectionName);
     }
 
-    public void getHashtagFrequencies() {
+    /**
+     * Gets the hashtags frequencies in collected tweets
+     */
+    private void getHashtagFrequencies() {
         writeToTagcloudFile(calculateFrequencies("hashtags","twitter"),"hashtag_frequencies_twitter.txt");
     }
 
-    public void getTwitterMentionFrequencies() {
+    /**
+     * Gets the mentions frequencies in collected tweets
+     */
+    private void getTwitterMentionFrequencies() {
         writeToTagcloudFile(calculateFrequencies("mentions","twitter"),"mentions_frequencies_twitter.txt");
     }
 
-    public void getLocationFrequencies() {
+    /**
+     * Gets the location frequencies in collected tweets and Youtube comments
+     */
+    private void getLocationFrequencies() {
         writeToTagcloudFile(calculateFrequenciesSimple("geo","twitter"),"location_frequencies_twitter.txt");
         writeToTagcloudFile(calculateFrequenciesSimple("location","youtube"),"location_frequencies_youtube.txt");
     }
 
-    public void getDateFrequencies() {
+    /**
+     * Gets the date frequencies in collected tweets
+     */
+    private void getDateFrequencies() {
         writeToTagcloudFile(calculateFrequenciesSimple("date","twitter"),"date_frequencies_twitter.txt");
     }
 
+    /**
+     * Gets the twitter users frequencies in collected tweets
+     */
+    private void getTwitterUsersFrequencies() {
+        writeToTagcloudFile(calculateFrequenciesSimple("user_name","twitter"),"user_frequencies_twitter.txt");
+    }
+
+    /**
+     * Gets the youtube users frequencies in collected Youtube comments
+     */
+    private void getYoutubeUsersFrequencies() {
+        writeToTagcloudFile(calculateFrequenciesSimple("authorID","youtube"),"user_frequencies_youtube.txt");
+    }
+
+    /**
+     * Calculates frequencies of field by hashing, without preprocessing
+     * @param field The field, which frequency is counted
+     * @param medium The social medium e.g. "twitter" or "youtube"
+     * @return A map of distinct keys and frequencies values
+     */
     private HashMap<String,Integer> calculateFrequenciesSimple(String field, String medium) {
         HashMap<String,Integer> frequencies = new HashMap<>();
         HashMap<ObjectId,JSONObject> tweets_comments;
@@ -66,8 +98,9 @@ public class AnalyticsExtractor {
     }
 
     /**
-     * Calculates the frequencies of given field for a specific collection of tweets
+     * Calculates the frequencies of given field for a specific collection of tweets/comments with preprocessing
      * @param field The field we want to calculate the frequency of
+     * @param medium The social medium e.g. "twitter" or "youtube"
      * @return Pairs of field values and frequencies
      */
     private HashMap<String,Integer> calculateFrequencies(String field, String medium) {
@@ -96,6 +129,11 @@ public class AnalyticsExtractor {
         return frequencies;
     }
 
+    /**
+     * Writes file to be read by tag cloud creation tools
+     * @param map The key-frequency pairs
+     * @param filename The name of the exported file
+     */
     private void writeToTagcloudFile(HashMap<String,Integer> map, String filename) {
         String path = "out\\" + filename;
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
@@ -111,12 +149,14 @@ public class AnalyticsExtractor {
     }
 
     /**
-     * Test function
+     * Combines all the analytics extractors
      */
     public void analyze() {
-        HashMap<String,Integer> frequencies = calculateFrequencies("hashtags","twitter");
-        for(String hashtag : frequencies.keySet()) {
-            System.out.println("Hashtag: " + hashtag + ": " + frequencies.get(hashtag));
-        }
+        getHashtagFrequencies();
+        getTwitterMentionFrequencies();
+        getLocationFrequencies();
+        getDateFrequencies();
+        getTwitterUsersFrequencies();
+        getYoutubeUsersFrequencies();
     }
 }
