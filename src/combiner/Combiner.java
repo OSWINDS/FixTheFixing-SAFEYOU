@@ -2,6 +2,7 @@ package combiner;
 
 import analytics.AnalyticsExtractor;
 import analytics.FrequencyCounter;
+import analytics.LocationDetector;
 import org.json.JSONException;
 import twitter.main.TwitterExporter;
 import youtube.YoutubeExporter;
@@ -25,6 +26,7 @@ public class Combiner {
      */
     public static void main(String[] args) throws JSONException, IOException {
 
+
         if(args != null) {
             // Collect Youtube comments and insert them to DB
             YoutubeExporter.main(args);
@@ -43,5 +45,6 @@ public class Combiner {
                 analyticsExtractor.analyze();
             }
         }
+
     }
 }

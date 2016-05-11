@@ -13,7 +13,7 @@ import java.util.StringJoiner;
  * Class to produce the analytics
  * Created by sifantid on 5/5/2016.
  */
-public class AnalyticsExtractor {
+public class    AnalyticsExtractor {
     private static MongoConnector mc;
 
     /**
