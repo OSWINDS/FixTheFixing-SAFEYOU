@@ -42,8 +42,25 @@ public class    AnalyticsExtractor {
      * Gets the location frequencies in collected tweets and Youtube comments
      */
     private void getLocationFrequencies() {
-        writeToTagcloudFile(calculateFrequenciesSimple("geo","twitter"),"location_frequencies_twitter.txt");
-        writeToTagcloudFile(calculateFrequenciesSimple("location","youtube"),"location_frequencies_youtube.txt");
+        writeToTagcloudFile(getCountriesFrequencies(calculateFrequenciesSimple("geo","twitter")),"location_frequencies_twitter.txt");
+        writeToTagcloudFile(getCountriesFrequencies(calculateFrequenciesSimple("location","youtube")),"location_frequencies_youtube.txt");
+    }
+
+    private HashMap<String,Integer> getCountriesFrequencies(HashMap<String,Integer> locations) {
+        HashMap<String, Integer> countriesFrequencies = new HashMap<>();
+        for(String location : locations.keySet()) {
+            String city = "";
+            if(location.contains(",")) {
+                city = location.substring(0, location.indexOf(",")).replaceAll(" ", "_");
+            }
+            city = city.replaceAll(" ","_");
+            String country = LocationDetector.getCountryOf(city);
+            if(!country.isEmpty()) {
+                countriesFrequencies.putIfAbsent(country, 0);
+                countriesFrequencies.computeIfPresent(country, (k, v) -> v + 1);
+            }
+        }
+        return countriesFrequencies;
     }
 
     /**
@@ -66,6 +83,7 @@ public class    AnalyticsExtractor {
     private void getYoutubeUsersFrequencies() {
         writeToTagcloudFile(calculateFrequenciesSimple("authorID","youtube"),"user_frequencies_youtube.txt");
     }
+
 
     /**
      * Calculates frequencies of field by hashing, without preprocessing
@@ -139,7 +157,7 @@ public class    AnalyticsExtractor {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(path), "utf-8"))) {
             for(String s : map.keySet()) {
-                String key = s.replace(", ",";");
+                String key = s.replace(", ",";"); // If there are commas in the initial key String
                 writer.write(key + " , " + map.get(s));
                 writer.write(System.lineSeparator());
             }

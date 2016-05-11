@@ -29,8 +29,8 @@ public class Combiner {
 
         if(args != null) {
             // Collect Youtube comments and insert them to DB
-            YoutubeExporter.main(args);
-            Preprocessor.preprocessComments(args[4].split("=")[1], fc);
+            /*YoutubeExporter.main(args);
+            Preprocessor.preprocessComments(args[4].split("=")[1], fc);*/
 
 
             // Collect tweets and insert them to DB
@@ -42,7 +42,7 @@ public class Combiner {
 
             if(args.length >= 5) {
                 analyticsExtractor = new AnalyticsExtractor(args[4].split("=")[1]);
-                analyticsExtractor.analyze();
+                //analyticsExtractor.analyze();
             }
         }
 
