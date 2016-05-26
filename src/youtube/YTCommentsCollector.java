@@ -69,18 +69,23 @@ public class YTCommentsCollector {
                     String authorID = snippet.getAuthorChannelId().toString();
 
                     String userURL = snippet.getAuthorGoogleplusProfileUrl();
-                    String[] splitted = userURL.split("/");
-                    String userID = splitted[splitted.length-1];    //gets the user ID
+                    if(userURL!=null){      //if the user still exists
 
-                    String url = String.format("https://www.googleapis.com/plus/v1/people/"+userID+"?key="+API_KEY);    //creates the user api URL
+                        String[] splitted = userURL.split("/");
+                        String userID = splitted[splitted.length-1];    //gets the user ID
 
-                    HttpGet httpGet = new HttpGet(url);
-                    HttpEntity entity = defaultHttpClient.execute(httpGet).getEntity();
+                        String url = String.format("https://www.googleapis.com/plus/v1/people/"+userID+"?key="+API_KEY);    //creates the user api URL
 
-                    String[] userDetails = getDetailsFromJSON(entity);      //gets the user details
+                        HttpGet httpGet = new HttpGet(url);
+                        HttpEntity entity = defaultHttpClient.execute(httpGet).getEntity();
 
-                    JsonObject jsonObject = createJSONfor(comment,authorID,userDetails[0],userDetails[1],userDetails[2]);
-                    jsons.add(jsonObject);
+                        String[] userDetails = getDetailsFromJSON(entity);      //gets the user details
+
+                        JsonObject jsonObject = createJSONfor(comment,authorID,userDetails[0],userDetails[1],userDetails[2]);
+                        jsons.add(jsonObject);
+
+                    }
+
 
 
                     /*      Comment's replies part
