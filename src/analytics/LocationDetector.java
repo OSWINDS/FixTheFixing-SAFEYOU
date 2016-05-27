@@ -27,29 +27,40 @@ public class LocationDetector {
      */
     public static String getCountryOf(String city){
 
-        String url = String.format("http://maps.googleapis.com/maps/api/geocode/json?address="+city+"&sensor=false"+"?key="+API_KEY);
-        HttpGet httpGet = new HttpGet(url);
-        String country = "";
+        if(!city.equals("")){
 
-        try {
-            HttpEntity entity = defaultHttpClient.execute(httpGet).getEntity();
-            String retSrc = EntityUtils.toString(entity);
-            JSONObject jsonObject = new JSONObject(retSrc); //Convert String to JSON Object
-            country = parseJSONforCountry(jsonObject);   //passes json to be parsed
-            if(country.equals("")){
-                System.out.println("Could not find country for: "+city);
+            String url = String.format("http://maps.googleapis.com/maps/api/geocode/json?address="+city+"&sensor=false"+"?key="+API_KEY);
+            System.out.println(url);
+            HttpGet httpGet = new HttpGet(url);
+            String country = "";
+
+            try {
+                HttpEntity entity = defaultHttpClient.execute(httpGet).getEntity();
+                String retSrc = EntityUtils.toString(entity);
+                JSONObject jsonObject = new JSONObject(retSrc); //Convert String to JSON Object
+                country = parseJSONforCountry(jsonObject);   //passes json to be parsed
+                if(country.equals("")){
+                    System.out.println("Could not find country for: "+city);
+                }
+                else{
+                    System.out.println("City: "+city);
+                    System.out.println("Country: "+country);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            else{
-                System.out.println("City: "+city);
-                System.out.println("Country: "+country);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+            return country;
+
+
+        }
+        else{
+            System.out.println("Can not search for empty city string...");
+            return "";
         }
 
-        return country;
 
 
     }
@@ -67,17 +78,21 @@ public class LocationDetector {
 
             JSONArray resultsArray = jsonObject.getJSONArray("results");
             if (resultsArray.length() > 0) {    //if it returned results for the specific city
-                JSONObject firstResult = resultsArray.getJSONObject(0);     //gets the first results
+                JSONObject firstResult = resultsArray.getJSONObject(0);     //gets the first result
                 JSONArray addressComponentsArray = firstResult.getJSONArray("address_components");
                 String country = "";
                 for (int i = 0; i < addressComponentsArray.length(); i++) {
                     JSONObject countryObject = addressComponentsArray.getJSONObject(i);     //gets the object
                     JSONArray typeArray = countryObject.getJSONArray("types");
-                    if (typeArray.get(0).equals("country")) {     //if this JSONObject is a country object
-                        country = countryObject.getString("long_name");
-                        break;   //breaks out of the loop
+                    try{
+                        if (typeArray.get(0).equals("country")) {     //if this JSONObject is a country object
+                            country = countryObject.getString("long_name");
+                            break;   //breaks out of the loop
+                        }
                     }
-
+                    catch (JSONException e){    //if the type does not exist it will throw exception
+                        System.out.println(e.getCause());
+                    }
                 }
                 if (country.equals("")) {
                     return "";  //if no country found returns empty string
