@@ -66,13 +66,15 @@ public class Preprocessor {
     private static String preprocessTweet(String input){
         input = prepareText(input);
         String[] tokens = tokenizer(input);
+
         StringBuilder builder = new StringBuilder("");
         for(String s : tokens){
-            if(isWhitelisted(s) && !isMention(s, '@')){      //if the word is whitelisted and its not a 'Google Plus' mention
+            if(isWhitelisted(s)==true && !isMention(s, '@')){      //if the word is whitelisted and its not a 'Google Plus' mention
                 builder.append(" ").append(s);
             }
         }
-        return input;
+
+        return builder.toString();
     }
 
     /**
@@ -89,7 +91,7 @@ public class Preprocessor {
                 builder.append(" ").append(s);
             }
         }
-        return input;
+        return builder.toString();
     }
 
     /**
