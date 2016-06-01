@@ -28,17 +28,17 @@ public class Combiner {
 
 
         if(args != null) {
-            // Collect Youtube comments and insert them to DB
-//            YoutubeExporter.main(args);
-//            Preprocessor.preprocessComments(args[4].split("=")[1], fc);
-//
-//
-//            // Collect tweets and insert them to DB
-//            TwitterExporter.main(args);
-//            Preprocessor.preprocessTweets(args[4].split("=")[1], fc);
-//
-//            fc.exportFrequencies(); //creates frequencies.txt - sorted alphabetically
-//            fc.exportFrequenciesByValue(); //creates frequenciesByValue.txt - sorted by frequencies (descending order)
+     //        Collect Youtube comments and insert them to DB
+            YoutubeExporter.main(args);
+            Preprocessor.preprocessComments(args[4].split("=")[1], fc);
+
+
+            // Collect tweets and insert them to DB
+            TwitterExporter.main(args);
+            Preprocessor.preprocessTweets(args[4].split("=")[1], fc);
+
+            fc.exportFrequencies(); //creates frequencies.txt - sorted alphabetically
+            fc.exportFrequenciesByValue(); //creates frequenciesByValue.txt - sorted by frequencies (descending order)
 
             if(args.length >= 5) {
                 analyticsExtractor = new AnalyticsExtractor(args[4].split("=")[1]);
