@@ -96,12 +96,12 @@ public class Preprocessor {
 
     /**
      * Method checking if a string is white-listed
-     * A string is called white-listed if it's not a stop-word or a mention or a number or a URL
+     * A string is called white-listed if it's not a stop-word or a number or a URL
      * @param str The string to be checked
      * @return True if the string is white-listed, false otherwise
      */
     private static boolean isWhitelisted(String str){
-        return !isStopWord(str) && !isNumeric(str) && !isURL(str);
+        return !isStopWord(str) && !isNumeric(str);
     }
 
     /**
@@ -126,6 +126,21 @@ public class Preprocessor {
         } catch (MalformedURLException e){
             return false;
         }
+    }
+
+    /**
+     * Checks whether a string is a URL or not
+     * @param str The string to be checked
+     * @return output, the rest of the string without the URL
+     */
+    private static String urlRemoval(String str){
+        String[] tmp = tokenizer(str);
+        StringBuilder output = new StringBuilder();
+
+        for(String token:tmp)
+            if(!isURL(token)){output.append(token + " ");}
+
+        return output.toString();
     }
 
     /**
@@ -170,6 +185,7 @@ public class Preprocessor {
      * @return The strig without punctuation
      */
     private static String removePunctuation(String input){
+        input = input.replaceAll("_","");
         return input.replaceAll("\\W", " ");
     }
 
@@ -189,6 +205,7 @@ public class Preprocessor {
      */
     private static String prepareText(String input){
         input = toLowerCase(input);
+        input = urlRemoval(input);
         input = removePunctuation(input);
         input = removeSingleCharacter(input);
         input = input.replaceAll("\\s+"," ");
