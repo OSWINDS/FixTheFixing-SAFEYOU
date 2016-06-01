@@ -64,15 +64,15 @@ public class Preprocessor {
      * @return The parsed tweet text
      */
     private static String preprocessTweet(String input){
-        String[] temp = tokenizer(input);
-        String output = "";
-        for(String s : temp){
-            if(isWhitelisted(s) && !isMention(s, '@')){
-                output = output + " ";
-                output = output + s;
+        input = prepareText(input);
+        String[] tokens = tokenizer(input);
+        StringBuilder builder = new StringBuilder("");
+        for(String s : tokens){
+            if(isWhitelisted(s) && !isMention(s, '@')){      //if the word is whitelisted and its not a 'Google Plus' mention
+                builder.append(" ").append(s);
             }
         }
-        return finalizeText(output);
+        return input;
     }
 
     /**
@@ -81,6 +81,7 @@ public class Preprocessor {
      * @return The parsed comment text
      */
     private static String preprocessComment(String input){
+        input = prepareText(input);
         String[] tokens = tokenizer(input);     //tokenizes the input string
         StringBuilder builder = new StringBuilder("");
         for(String s : tokens){
@@ -88,7 +89,7 @@ public class Preprocessor {
                 builder.append(" ").append(s);
             }
         }
-        return finalizeText(builder.toString());
+        return input;
     }
 
     /**
@@ -167,11 +168,7 @@ public class Preprocessor {
      * @return The strig without punctuation
      */
     private static String removePunctuation(String input){
-        input = input.replaceAll("[.,:;()\\[\\]{}?_\\-!\'*\"@#$%^&+=|~`><]+", " ");
-        input = input.replaceAll("\\s+"," ");
-        input = input.trim();
-
-        return input;
+        return input.replaceAll("\\W", " ");
     }
 
     /**
@@ -180,11 +177,7 @@ public class Preprocessor {
      * @return The string without punctuation
      */
     private static String removeSingleCharacter(String input){
-        input = input.replaceAll("\\s[a-z]\\s", " ");
-        input = input.replaceAll("\\s+"," ");
-        input = input.trim();
-
-        return input;
+        return input.replaceAll("\\b[a-z]\\b", " ");
     }
 
     /**
@@ -192,10 +185,12 @@ public class Preprocessor {
      * @param input The string to be checked
      * @return The string finalized
      */
-    private static String finalizeText(String input){
+    private static String prepareText(String input){
         input = toLowerCase(input);
         input = removePunctuation(input);
         input = removeSingleCharacter(input);
+        input = input.replaceAll("\\s+"," ");
+        input = input.trim();
 
         return input;
     }
