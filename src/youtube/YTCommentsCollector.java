@@ -128,7 +128,7 @@ public class YTCommentsCollector {
 
     private String readAPIKey(){
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader("API_KEY.txt"));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("../../Credentials/Youtube/API_KEY.txt"));
             String key = bufferedReader.readLine();    //key is in the string in the first line of the API_KEY.txt file
             bufferedReader.close();
             return key;
