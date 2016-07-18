@@ -17,3 +17,9 @@ querysearch="(Djokovic OR Novak) fixing" since=2016-01-18 until=2016-01-30 maxtw
 ###Search query for Mongo Explorer (Ctrl+F in IntelliJ)
 For instance, if I'm looking for a tweet created at 2016/01/28 I'd type
 in the filter text box: {'tweet.date':'2016/01/28'} , which typically follows a JSON format.
+
+###Credentials for Youtube
+In order to use the Google API and collect Youtube comments, each user needs Google Credentials  <br/> 
+More: <https://developers.google.com/youtube/registering_an_application#Create_API_Keys>
+
+The API key should be inserted in the first line of [~Credentials/Youtube/API_KEY.txt] file
