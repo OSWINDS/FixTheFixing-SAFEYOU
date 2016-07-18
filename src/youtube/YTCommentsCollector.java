@@ -37,7 +37,6 @@ public class YTCommentsCollector {
     private static YouTube youtube;
     private static JsonBuilderFactory factory = Json.createBuilderFactory(null);
     private static final HttpClient defaultHttpClient = HttpClients.createDefault();
-    private static final String API_KEY = "AIzaSyC3tKP3j78TJNG9CqxujOeoUrZrqB_ewfY";    //the api key
 
 
 
@@ -74,7 +73,7 @@ public class YTCommentsCollector {
                         String[] splitted = userURL.split("/");
                         String userID = splitted[splitted.length-1];    //gets the user ID
 
-                        String url = String.format("https://www.googleapis.com/plus/v1/people/"+userID+"?key="+API_KEY);    //creates the user api URL
+                        String url = String.format("https://www.googleapis.com/plus/v1/people/"+userID+"?key="+readAPIKey());    //creates the user api URL
 
                         HttpGet httpGet = new HttpGet(url);
                         HttpEntity entity = defaultHttpClient.execute(httpGet).getEntity();
@@ -125,6 +124,20 @@ public class YTCommentsCollector {
         }
 
         return jsons;   //returns the jsons
+    }
+
+    private String readAPIKey(){
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("API_KEY.txt"));
+            String key = bufferedReader.readLine();    //key is in the string in the first line of the API_KEY.txt file
+            bufferedReader.close();
+            return key;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     /**
