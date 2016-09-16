@@ -28,7 +28,7 @@ public class Combiner {
 
 
         if(args != null) {
-     //        Collect Youtube comments and insert them to DB
+            // Collect Youtube comments and insert them to DB
             YoutubeExporter.main(args);
             Preprocessor.preprocessComments(args[4].split("=")[1], fc);
 
