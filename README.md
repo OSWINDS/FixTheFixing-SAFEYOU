@@ -11,6 +11,14 @@ Fix the Fixing EU project code
 ###Dependencies
 org.mongodb:mongodb-driver:3.2.2
 
+###For WordNet:
+
+  - Download WordNet [executable](http://wordnet.princeton.edu/wordnet/download/current-version/) *(not just DB files)*
+
+  - Download [rita.jar](http://www.rednoise.org/rita/download.php) *(end of page)*
+
+  - Add rita.jar to project and if needed change path in getSynonyms function (line: RiWordNet wordnet = new RiWordNet("C:\\Program Files (x86)\\WordNet\\2.1"); // The WordNet directory)
+
 ###Example Arguments for Twitter
 querysearch="(Djokovic OR Novak) fixing" since=2016-01-18 until=2016-01-30 maxtweets=1000 theme="djokovic"
 
