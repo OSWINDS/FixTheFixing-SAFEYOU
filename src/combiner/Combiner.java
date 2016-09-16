@@ -4,6 +4,7 @@ import analytics.AnalyticsExtractor;
 import analytics.FrequencyCounter;
 import analytics.LocationDetector;
 import org.json.JSONException;
+import sentiment.Analysis;
 import twitter.main.TwitterExporter;
 import youtube.YoutubeExporter;
 
@@ -28,7 +29,7 @@ public class Combiner {
 
 
         if(args != null) {
-            // Collect Youtube comments and insert them to DB
+/*            // Collect Youtube comments and insert them to DB
             YoutubeExporter.main(args);
             Preprocessor.preprocessComments(args[4].split("=")[1], fc);
 
@@ -43,7 +44,11 @@ public class Combiner {
             if(args.length >= 5) {
                 analyticsExtractor = new AnalyticsExtractor(args[4].split("=")[1]);
                 analyticsExtractor.analyze();
-            }
+            }*/
+
+            Analysis analysis = new Analysis(args[4].split("=")[1]);
+            //analysis.analyze("twitter");
+            //analysis.analyze("youtube");
         }
 
     }

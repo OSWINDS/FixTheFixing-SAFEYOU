@@ -4,12 +4,15 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import javafx.util.Pair;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -20,13 +23,13 @@ import static com.mongodb.client.model.Filters.eq;
 public class MongoConnector {
 
     // Fields for twitter DB
-    public static final String _TWEET_JSON_  = "tweet";
-    public static final String _TWEET_PARSED_STRING_ = "parsedString";
-    public static final String _TWEET_EMOTION_SCORES_ = "emScores";
+    private static final String _TWEET_JSON_  = "tweet";
+    private static final String _TWEET_PARSED_STRING_ = "parsedString";
+    private static final String _TWEET_EMOTION_SCORES_ = "emScores";
     // Fields for youtube DB
-    public static final String _COMMENT_JSON_  = "comment";
-    public static final String _COMMENT_PARSED_STRING_ = "parsedString";
-    public static final String _COMMENT_EMOTION_SCORES_ = "emScores";
+    private static final String _COMMENT_JSON_  = "comment";
+    private static final String _COMMENT_PARSED_STRING_ = "parsedString";
+    private static final String _COMMENT_EMOTION_SCORES_ = "emScores";
 
     private static final String _COLL_INDEX_ = "_id";
 
@@ -153,6 +156,46 @@ public class MongoConnector {
     public HashMap<ObjectId, String> getParsedTweets() {
         MongoCollection<Document> parsedTweetsCollection = _db.getCollection(_coll_name_twitter);
         return getParsed(parsedTweetsCollection, _TWEET_PARSED_STRING_);
+    }
+
+    public boolean insertEmotionsTwitter(ObjectId UUID, List<Pair<String, Double>> emotions) {
+        MongoCollection<Document> tweets = _db.getCollection(_coll_name_twitter);
+        return insertEmotions(UUID, emotions, tweets);
+    }
+
+    public boolean insertEmotionsYoutube(ObjectId UUID, List<Pair<String, Double>> emotions) {
+        MongoCollection<Document> comments = _db_youtube.getCollection(_coll_name_youtube);
+        return insertEmotions(UUID, emotions, comments);
+    }
+
+    /**
+     * Takes a tweet id and inserts emotions with their values
+     * @param UUID The Id of the tweet that we want to insert the emotions to.
+     *           Pair (Document's Unique number, the trend name of the tweet)
+     * @param emotions an array list of pair(string, double) where the string is the name of the emotion and
+     *                 the double is the value of that emotion
+     * @return if the document
+     */
+    private boolean insertEmotions(ObjectId UUID, List<Pair<String/* Emotion Name */, Double/* score */>> emotions, MongoCollection<Document> col) {
+        FindIterable<Document> iterable = col.find(new Document(_COLL_INDEX_, UUID));
+
+        Document document = iterable.first();
+
+        if (document != null) {
+            Document scores = new Document();
+
+            for (Pair<String, Double> pair : emotions) {
+                scores.append(pair.getKey(), pair.getValue());
+            }
+
+            document.append(_TWEET_EMOTION_SCORES_, scores);
+
+            col.replaceOne(new Document(_COLL_INDEX_, UUID), document);
+            return true;
+        }
+
+        errorMongo("Document " + UUID + " not found!");
+        return false;
     }
 
     /**
