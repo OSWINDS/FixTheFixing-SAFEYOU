@@ -25,11 +25,12 @@ public class MongoConnector {
     // Fields for twitter DB
     private static final String _TWEET_JSON_  = "tweet";
     private static final String _TWEET_PARSED_STRING_ = "parsedString";
-    private static final String _TWEET_EMOTION_SCORES_ = "emScores";
+
     // Fields for youtube DB
     private static final String _COMMENT_JSON_  = "comment";
     private static final String _COMMENT_PARSED_STRING_ = "parsedString";
-    private static final String _COMMENT_EMOTION_SCORES_ = "emScores";
+
+    private static final String EMOTION_SCORES_ = "emScores";
 
     private static final String _COLL_INDEX_ = "_id";
 
@@ -158,23 +159,36 @@ public class MongoConnector {
         return getParsed(parsedTweetsCollection, _TWEET_PARSED_STRING_);
     }
 
+    /**
+     * Insert emotions to Twitter database
+     * @param UUID The Id of the tweet that we want to insert the emotions to.
+     * @param emotions an array list of pair(string, double) where the string is the name of the emotion and
+     *                 the double is the value of that emotion
+     * @return True if the insertion was done correctly, false otherwise
+     */
     public boolean insertEmotionsTwitter(ObjectId UUID, List<Pair<String, Double>> emotions) {
         MongoCollection<Document> tweets = _db.getCollection(_coll_name_twitter);
         return insertEmotions(UUID, emotions, tweets);
     }
 
+    /**
+     * Insert emotions to YouTube database
+     * @param UUID The Id of the comment that we want to insert the emotions to.
+     * @param emotions an array list of pair(string, double) where the string is the name of the emotion and
+     *                 the double is the value of that emotion
+     * @return True if the insertion was done correctly, false otherwise
+     */
     public boolean insertEmotionsYoutube(ObjectId UUID, List<Pair<String, Double>> emotions) {
         MongoCollection<Document> comments = _db_youtube.getCollection(_coll_name_youtube);
         return insertEmotions(UUID, emotions, comments);
     }
 
     /**
-     * Takes a tweet id and inserts emotions with their values
-     * @param UUID The Id of the tweet that we want to insert the emotions to.
-     *           Pair (Document's Unique number, the trend name of the tweet)
+     * Takes a tweet or comment id and inserts emotions with their values
+     * @param UUID The Id of the tweet/comment that we want to insert the emotions to.
      * @param emotions an array list of pair(string, double) where the string is the name of the emotion and
      *                 the double is the value of that emotion
-     * @return if the document
+     * @return True if the insertion was done correctly, false otherwise
      */
     private boolean insertEmotions(ObjectId UUID, List<Pair<String/* Emotion Name */, Double/* score */>> emotions, MongoCollection<Document> col) {
         FindIterable<Document> iterable = col.find(new Document(_COLL_INDEX_, UUID));
@@ -188,7 +202,7 @@ public class MongoConnector {
                 scores.append(pair.getKey(), pair.getValue());
             }
 
-            document.append(_TWEET_EMOTION_SCORES_, scores);
+            document.append(EMOTION_SCORES_, scores);
 
             col.replaceOne(new Document(_COLL_INDEX_, UUID), document);
             return true;
