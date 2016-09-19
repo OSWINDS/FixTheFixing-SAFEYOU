@@ -150,6 +150,11 @@ public class MongoConnector {
         return getDocuments(tweetsCollection,_TWEET_JSON_);
     }
 
+    public HashMap<ObjectId,JSONObject> getFullTweets() {
+        MongoCollection<Document> tweetsCollection = _db.getCollection(_coll_name_twitter);
+        return getDocuments(tweetsCollection);
+    }
+
     /**
      * Gets all parsed tweets from twitter database
      * @return Pairs of tweets' IDs and tweets' parsed text
@@ -222,6 +227,15 @@ public class MongoConnector {
     }
 
     /**
+     * Gets all youtube comments from youtube database
+     * @return Pairs of comments' IDs and comments' JSONs
+     */
+    public HashMap<ObjectId,JSONObject> getFullComments() {
+        MongoCollection<Document> commentsCollection = _db_youtube.getCollection(_coll_name_youtube);
+        return getDocuments(commentsCollection);
+    }
+
+    /**
      * Gets all youtube comments' parsed text
      * @return Pairs of comments' IDs and comments' parsed texts
      */
@@ -264,6 +278,19 @@ public class MongoConnector {
             ObjectId id = doc.getObjectId(_COLL_INDEX_);
             Document document = (Document) doc.get(field);
             JSONObject json = new JSONObject(document);
+            docs.put(id,json);
+        }
+        return docs;
+    }
+
+    private HashMap<ObjectId,JSONObject> getDocuments(MongoCollection<Document> col) {
+        FindIterable<Document> iterable = col.find();
+
+        HashMap<ObjectId,JSONObject> docs = new HashMap<>();
+
+        for (Document doc: iterable) {
+            ObjectId id = doc.getObjectId(_COLL_INDEX_);
+            JSONObject json = new JSONObject(doc);
             docs.put(id,json);
         }
         return docs;

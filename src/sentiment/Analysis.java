@@ -1,12 +1,18 @@
 package sentiment;
 
+import analytics.AnalyticsExtractor;
 import mongo.MongoConnector;
 import org.bson.types.ObjectId;
 import javafx.util.Pair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.*;
 import java.util.Map.Entry;
 
-import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Custom class the performs the pre-processing and sentiment analysis on tweets
@@ -18,9 +24,11 @@ public class Analysis {
     private HashMap<Emotions, ArrayList<String>> representativeWords;
     private SenticNet senticNetLib;
     private MongoConnector mongoConnector;
+    private String collectionName;
 
     /**
      * Constructor of the class; Initializes all variables
+     * @param collectionName The name of the collection at hand
      * @throws IOException
      */
     public Analysis(String collectionName) throws IOException {
@@ -28,6 +36,8 @@ public class Analysis {
 
         String senticNetFilename = "./data/senticnet3.rdf.xml";
         senticNetLib = new SenticNet(senticNetFilename);
+
+        this.collectionName = collectionName;
 
         mongoConnector =  new MongoConnector("localhost", 27017, collectionName);
 
@@ -37,7 +47,92 @@ public class Analysis {
     }
 
     /**
+     * Sentiment analysis of a case's tweets
+     * @throws JSONException In case a field cannot be found
+     */
+    public void analyzeCase() throws JSONException {
+        HashMap<ObjectId, JSONObject> tweets = mongoConnector.getFullTweets(); // Get all tweets
+        HashMap<String, Month> months = new HashMap<>(); // To save emotions per month
+        String month;
+        String year;
+        String key; // map key
+        for (JSONObject tweet : tweets.values()) { // For each tweet
+            month = getMonth(tweet.getJSONObject("tweet").getString("date")); // Find month
+            year = getYear(tweet.getJSONObject("tweet").getString("date")); // Find year
+            key = year + "_" + month;
+
+            months.putIfAbsent(key, new Month(month,year)); // If it's the first tweet of the month, add month
+            // Increment feelings
+            months.get(key).addFeelingCount(tweet.getJSONObject("emScores").getDouble("ANGER"),
+                    tweet.getJSONObject("emScores").getDouble("DISGUST"),
+                    tweet.getJSONObject("emScores").getDouble("FEAR"),
+                    tweet.getJSONObject("emScores").getDouble("JOY"),
+                    tweet.getJSONObject("emScores").getDouble("SADNESS"),
+                    tweet.getJSONObject("emScores").getDouble("SURPRISE"));
+        }
+
+        for (Month monthObject : months.values()) { // For each month
+            monthObject.finalizeFeelings(); // Find the feelings for the whole month
+            writeFeelingsToFile(monthObject);
+        }
+    }
+
+    /**
+     * Writes sentiment scores for a specific month to file
+     * @param monthObject All the month related information to be written to file
+     */
+    private void writeFeelingsToFile(Month monthObject) {
+        String path = "out\\" + collectionName + "\\" + monthObject.getYear() + "_" + monthObject.getMonth() + ".txt";
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(path), "utf-8"))) {
+            writer.write("ANGER" + " , " + monthObject.getAngerCount());
+            writer.write(System.lineSeparator());
+            writer.write("DISGUST" + " , " + monthObject.getDisgustCount());
+            writer.write(System.lineSeparator());
+            writer.write("FEAR" + " , " + monthObject.getFearCount());
+            writer.write(System.lineSeparator());
+            writer.write("JOY" + " , " + monthObject.getJoyCount());
+            writer.write(System.lineSeparator());
+            writer.write("SADNESS" + " , " + monthObject.getSadnessCount());
+            writer.write(System.lineSeparator());
+            writer.write("SURPRISE" + " , " + monthObject.getSurpriseCount());
+            writer.write(System.lineSeparator());
+            writer.write("Total month tweets" + " : " + monthObject.getCount());
+            writer.write(System.lineSeparator());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get the month out of a date
+     * @param date The date string
+     * @return The month string
+     */
+    private String getMonth(String date) {
+        Matcher m = Pattern.compile("\\/(\\d{2})\\/").matcher(date);
+        if(m.find()) {
+            return m.group(1);
+        }
+        return "";
+    }
+
+    /**
+     * Get the year out of a date
+     * @param date The date string
+     * @return The year string
+     */
+    private String getYear(String date) {
+        Matcher m = Pattern.compile("(\\d{4})\\/").matcher(date);
+        if(m.find()) {
+            return m.group(1);
+        }
+        return "";
+    }
+
+    /**
      * Inserts the processed tweets and the emotions in the DB
+     * @param dbType The type of the database; can be either twitter or youtube
      * @throws IOException
      */
     public void analyze(String dbType) throws IOException {
@@ -69,22 +164,7 @@ public class Analysis {
      * @throws IOException
      */
     private List<Pair<String, Double>> sentiment(String tweet) throws  IOException {
-        //System.out.println("----------------------------------------------------");
         tweet = tweet.concat(" ");
-        //System.out.println("Tweet: " + tweet);
-        // If you want to apply stemming techniques to the tweet remove the comment characters
-        /*String[] words = tweet.split(" ");
-        String[] stemmedWords = new String[words.length];
-        for(int i = 0; i < words.length; i++) {
-            stemmedWords[i] = stemmer.stemm(words[i]) + " ";
-        }
-        StringBuilder strBuilder = new StringBuilder();
-        for (int i = 0; i < stemmedWords.length; i++) {
-            strBuilder.append(stemmedWords[i]);
-        }
-        tweet = strBuilder.toString();
-
-        System.out.println("Stemmed Tweet: " + tweet);*/
         List<Pair<String, Double>> scores = new ArrayList<>();
 
         int[] myCounter = new int[6];

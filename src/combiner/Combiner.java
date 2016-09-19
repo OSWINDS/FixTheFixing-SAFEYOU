@@ -29,7 +29,7 @@ public class Combiner {
 
 
         if(args != null) {
-/*            // Collect Youtube comments and insert them to DB
+            /*// Collect Youtube comments and insert them to DB
             YoutubeExporter.main(args);
             Preprocessor.preprocessComments(args[4].split("=")[1], fc);
 
@@ -49,6 +49,8 @@ public class Combiner {
             Analysis analysis = new Analysis(args[4].split("=")[1]);
             //analysis.analyze("twitter");
             //analysis.analyze("youtube");
+            analysis.analyzeCase();
+
         }
 
     }

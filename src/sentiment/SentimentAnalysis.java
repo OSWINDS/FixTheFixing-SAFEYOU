@@ -159,11 +159,11 @@ class SentimentAnalysis {
             representativesTemp.addAll(basicEmotions.get(e));
             representativesTemp = eliminateDuplicates(representativesTemp);
             //representativesTemp.sort(String.CASE_INSENSITIVE_ORDER);
-            System.out.println("Emotion: " + e);
+            /*System.out.println("Emotion: " + e);
             for(String word:representativesTemp) {
                 System.out.println("Word: " + word);
             }
-            System.out.println("-------------------------------------------------------------------------------------------");
+            System.out.println("-------------------------------------------------------------------------------------------");*/
             representativeWords.put(e,representativesTemp);
         }
 
