@@ -1,6 +1,5 @@
 package sentiment;
 
-import analytics.AnalyticsExtractor;
 import mongo.MongoConnector;
 import org.bson.types.ObjectId;
 import javafx.util.Pair;
@@ -47,10 +46,39 @@ public class Analysis {
     }
 
     /**
-     * Sentiment analysis of a case's tweets
+     * Sentiment analysis for the whole case
      * @throws JSONException In case a field cannot be found
      */
-    public void analyzeCase() throws JSONException {
+    private void analyzeCaseTotal(String dbType) throws JSONException {
+        HashMap<ObjectId, JSONObject> objects;
+        Month caseTotal;
+        String key;
+        if(dbType.equals("twitter")) {
+            objects = mongoConnector.getFullTweets(); // Get all tweets
+            caseTotal = new Month("twitter_sentiment", "total");
+        } else {
+            objects = mongoConnector.getFullComments(); // Get all tweets
+            caseTotal = new Month("youtube_sentiment", "total");
+        }
+        for (JSONObject object : objects.values()) { // For each tweet
+            // Increment feelings
+            caseTotal.addFeelingCount(object.getJSONObject("emScores").getDouble("ANGER"),
+                    object.getJSONObject("emScores").getDouble("DISGUST"),
+                    object.getJSONObject("emScores").getDouble("FEAR"),
+                    object.getJSONObject("emScores").getDouble("JOY"),
+                    object.getJSONObject("emScores").getDouble("SADNESS"),
+                    object.getJSONObject("emScores").getDouble("SURPRISE"));
+        }
+
+        caseTotal.finalizeFeelings();
+        writeFeelingsToFile(caseTotal);
+    }
+
+    /**
+     * Sentiment analysis of a case's tweets per month
+     * @throws JSONException In case a field cannot be found
+     */
+    private void analyzeCase() throws JSONException {
         HashMap<ObjectId, JSONObject> tweets = mongoConnector.getFullTweets(); // Get all tweets
         HashMap<String, Month> months = new HashMap<>(); // To save emotions per month
         String month;
@@ -97,7 +125,7 @@ public class Analysis {
             writer.write(System.lineSeparator());
             writer.write("SURPRISE" + " , " + monthObject.getSurpriseCount());
             writer.write(System.lineSeparator());
-            writer.write("Total month tweets" + " : " + monthObject.getCount());
+            writer.write("Total tweets" + " : " + monthObject.getCount());
             writer.write(System.lineSeparator());
         } catch (IOException e) {
             e.printStackTrace();
@@ -135,7 +163,7 @@ public class Analysis {
      * @param dbType The type of the database; can be either twitter or youtube
      * @throws IOException
      */
-    public void analyze(String dbType) throws IOException {
+    private void analyze(String dbType) throws IOException {
         if(dbType.equals("twitter")) { // Analyze tweets
             HashMap<ObjectId, String> tweetsToParse = mongoConnector.getParsedTweets();
 
@@ -206,6 +234,24 @@ public class Analysis {
         }
 
         return scores;
+    }
+
+    /**
+     * Calls all methods needed for sentiment analysis
+     * @throws IOException In case the file cannot open
+     * @throws JSONException In case the specified JSON field does not exist
+     */
+    public void SentimentAnalysis() throws IOException, JSONException {
+        System.out.println("Calculating tweets' emotions...");
+        analyze("twitter"); // Calculate emotion scores for tweets
+        System.out.println("Calculating comments' emotions...");
+        analyze("youtube"); // Calculate emotion scores for comments
+        System.out.println("Calculating Twitter's emotions per month...");
+        analyzeCase(); // Analyze case's tweets per month
+        System.out.println("Calculating Twitter's emotions in total...");
+        analyzeCaseTotal("twitter"); // Analyze case's tweets in total
+        System.out.println("Calculating YouTube's emotions in total...");
+        analyzeCaseTotal("youtube"); // Analyze case's comments in total
     }
 }
 

@@ -47,10 +47,7 @@ public class Combiner {
             }*/
 
             Analysis analysis = new Analysis(args[4].split("=")[1]);
-            //analysis.analyze("twitter");
-            //analysis.analyze("youtube");
-            analysis.analyzeCase();
-
+            analysis.SentimentAnalysis();
         }
 
     }
