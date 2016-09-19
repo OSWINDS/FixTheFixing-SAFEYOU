@@ -11,6 +11,9 @@ Fix the Fixing EU project code
 ###Dependencies
 org.mongodb:mongodb-driver:3.2.2
 
+###Folder Creation
+Folder "out" should be created manually. In order to run sentiment analysis a subfolder with the name of the study case should be created. e.g. "out/djokovic"
+
 ###For WordNet:
 
   - Download WordNet [executable](http://wordnet.princeton.edu/wordnet/download/current-version/) *(not just DB files)*
