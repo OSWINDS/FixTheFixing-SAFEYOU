@@ -66,8 +66,15 @@ public class YTCommentsCollector {
                     CommentSnippet snippet = videoComment.getSnippet().getTopLevelComment().getSnippet();
                     String comment = snippet.getTextDisplay();
                     String authorID = snippet.getAuthorChannelId().toString();
+                    String authorName = snippet.getAuthorDisplayName();
 
-                    String userURL = snippet.getAuthorGoogleplusProfileUrl();
+                    JsonObject jsonObject = createJSONfor(comment,authorID,authorName);
+                    jsons.add(jsonObject);
+
+
+                    // DEPRECATED
+                    /*String userURL = snippet.getAuthorGoogleplusProfileUrl();
+
                     if(userURL!=null){      //if the user still exists
 
                         String[] splitted = userURL.split("/");
@@ -82,8 +89,7 @@ public class YTCommentsCollector {
 
                         JsonObject jsonObject = createJSONfor(comment,authorID,userDetails[0],userDetails[1],userDetails[2]);
                         jsons.add(jsonObject);
-
-                    }
+                    }*/
 
 
 
@@ -132,8 +138,6 @@ public class YTCommentsCollector {
             String key = bufferedReader.readLine();    //key is in the string in the first line of the API_KEY.txt file
             bufferedReader.close();
             return key;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -148,7 +152,7 @@ public class YTCommentsCollector {
      */
     private String[] getDetailsFromJSON(HttpEntity entity){
         String[] details = new String[3];
-        String retSrc = null;
+        String retSrc;
 
         if(entity!=null) {  //null => user does not exist
 
@@ -183,9 +187,7 @@ public class YTCommentsCollector {
                     details[2] = "-";
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
 
@@ -214,8 +216,6 @@ public class YTCommentsCollector {
             while ((line = br.readLine()) != null) {
                 videoIDs.add(line);     //adds the videoID in the list
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -232,6 +232,24 @@ public class YTCommentsCollector {
                 .add("gender",gender)
                 .add("location",location)
                 .add("birthday",birthday)
+                .build();
+
+        return jsonObject;
+    }
+
+    /**
+     * Builds JSON object for non deprecated attributes
+     * @param comment The comment's text
+     * @param authorID The author's ID
+     * @param name The author's YouTube username
+     * @return JSON object containing the above information
+     */
+    private JsonObject createJSONfor(String comment,String authorID,String name){
+
+        JsonObject jsonObject = factory.createObjectBuilder()
+                .add("comment", comment)
+                .add("authorID",authorID)
+                .add("authorName",name)
                 .build();
 
         return jsonObject;

@@ -39,12 +39,21 @@ public class AnalyticsExtractor {
     }
 
     /**
+     * Gets the word frequencies in collected tweets and comments
+     */
+    private void getWordFrequencies() {
+        writeToTagcloudFile(calculateFrequencies("parsedString","twitter"),"word_frequencies_twitter.txt");
+        writeToTagcloudFile(calculateFrequencies("parsedString","youtube"),"word_frequencies_youtube.txt");
+    }
+
+    /**
      * Gets the location frequencies in collected tweets and Youtube comments
      */
     private void getLocationFrequencies() {
         writeToTagcloudFile(getCountriesFrequencies(calculateFrequenciesSimple("geo","twitter")),"location_frequencies_twitter.txt");
-        writeToTagcloudFile(getCountriesFrequencies(calculateFrequenciesSimple("location","youtube")),"location_frequencies_youtube.txt");
+        //writeToTagcloudFile(getCountriesFrequencies(calculateFrequenciesSimple("location","youtube")),"location_frequencies_youtube.txt");
     }
+
 
     private HashMap<String,Integer> getCountriesFrequencies(HashMap<String,Integer> locations) {
         HashMap<String, Integer> countriesFrequencies = new HashMap<>();
@@ -81,8 +90,9 @@ public class AnalyticsExtractor {
      * Gets the youtube users frequencies in collected Youtube comments
      */
     private void getYoutubeUsersFrequencies() {
-        writeToTagcloudFile(calculateFrequenciesSimple("authorID","youtube"),"user_frequencies_youtube.txt");
+        writeToTagcloudFile(calculateFrequenciesSimple("authorName","youtube"),"user_frequencies_youtube.txt");
     }
+
 
 
     /**
@@ -124,10 +134,18 @@ public class AnalyticsExtractor {
     private HashMap<String,Integer> calculateFrequencies(String field, String medium) {
         HashMap<String,Integer> frequencies = new HashMap<>();
         HashMap<ObjectId,JSONObject> tweets_comments;
-        if(medium.equals("twitter")) {
-            tweets_comments = mc.getTweets();
+        if(field.compareTo("parsedString") != 0) {
+            if (medium.equals("twitter")) {
+                tweets_comments = mc.getTweets();
+            } else {
+                tweets_comments = mc.getComments();
+            }
         } else {
-            tweets_comments = mc.getComments();
+            if (medium.equals("twitter")) {
+                tweets_comments = mc.getFullTweets();
+            } else {
+                tweets_comments = mc.getFullComments();
+            }
         }
 
         for(JSONObject tweet_comment : tweets_comments.values()) {
@@ -137,8 +155,9 @@ public class AnalyticsExtractor {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if(!fieldValues[0].isEmpty()) {
-                for (String fieldValue : fieldValues) {
+
+            for (String fieldValue : fieldValues) {
+                if(!fieldValue.isEmpty()) {
                     frequencies.putIfAbsent(fieldValue, 0);
                     frequencies.computeIfPresent(fieldValue, (k, v) -> v + 1);
                 }
@@ -176,5 +195,6 @@ public class AnalyticsExtractor {
         getDateFrequencies();
         getTwitterUsersFrequencies();
         getYoutubeUsersFrequencies();
+        getWordFrequencies();
     }
 }

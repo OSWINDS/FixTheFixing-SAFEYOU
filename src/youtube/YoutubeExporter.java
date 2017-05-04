@@ -16,7 +16,7 @@ public class YoutubeExporter {
         for(JsonObject json : jsons){
             String comment = json.getString("comment");     //gets the comment field
             //String preprocessed = Preprocessor.preprocessComment(comment);
-            //PREPROCESSED TEXT SHOULD BE SAVEN INSIDE MONGOCONNECTOR (SOFIA)
+            //PREPROCESSED TEXT SHOULD BE SAVED INSIDE MONGOCONNECTOR (SOFIA)
         }
 
         for (String parameter : args) {

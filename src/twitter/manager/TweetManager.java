@@ -74,7 +74,7 @@ public class TweetManager {
      * @return A list of all tweets found
      */
     public static List<Tweet> getTweets(TwitterCriteria criteria) {
-        List<Tweet> results = new ArrayList<Tweet>();
+        List<Tweet> results = new ArrayList<>();
 
         try {
             String refreshCursor = null;
@@ -89,7 +89,7 @@ public class TweetManager {
                 }
 
                 for (Element tweet : tweets) {
-                    String usernameTweet = tweet.select("span.username.js-action-profile-name b").text();
+                    String usernameTweet = tweet.select("span.username").text();
                     String txt = tweet.select("p.js-tweet-text").text().replaceAll("[^\\u0000-\\uFFFF]", "");
                     int retweets = Integer.valueOf(tweet.select("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replaceAll(",", ""));
                     int favorites = Integer.valueOf(tweet.select("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replaceAll(",", ""));
