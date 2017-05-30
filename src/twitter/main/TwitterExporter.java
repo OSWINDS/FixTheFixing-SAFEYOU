@@ -60,6 +60,7 @@ public class TwitterExporter {
                     criteria.setUntil(parameterSplit[1]);
                 } else if (parameterSplit[0].equals("querysearch")) {
                     //Operators: https://dev.twitter.com/rest/public/search
+                    System.out.println("QUERY: " + parameterSplit[1]);
                     criteria.setQuerySearch(parameterSplit[1]);
                 } else if (parameterSplit[0].equals("maxtweets")) {
                     criteria.setMaxTweets(Integer.valueOf(parameterSplit[1]));

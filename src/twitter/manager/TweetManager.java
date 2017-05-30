@@ -91,11 +91,13 @@ public class TweetManager {
                 for (Element tweet : tweets) {
                     String usernameTweet = tweet.select("span.username").text();
                     String txt = tweet.select("p.js-tweet-text").text().replaceAll("[^\\u0000-\\uFFFF]", "");
+                    System.out.println("Tweet: " + txt);
                     int retweets = Integer.valueOf(tweet.select("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replaceAll(",", ""));
                     int favorites = Integer.valueOf(tweet.select("span.ProfileTweet-action--favorite span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replaceAll(",", ""));
                     long dateMs = Long.valueOf(tweet.select("small.time span.js-short-timestamp").attr("data-time-ms"));
                     String id = tweet.attr("data-tweet-id");
                     String permalink = tweet.attr("data-permalink-path");
+                    /* Geo element not working */
                     String geo = "";
                     Elements geoElement = tweet.select("span.Tweet-geo");
                     if (geoElement.size() > 0) {

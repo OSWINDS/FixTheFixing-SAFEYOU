@@ -31,6 +31,7 @@ public class MongoConnector {
     private static final String _COMMENT_PARSED_STRING_ = "parsedString";
 
     private static final String EMOTION_SCORES_ = "emScores";
+    private static final String SUBSTANCES_STRING_ = "substancesString";
 
     private static final String _COLL_INDEX_ = "_id";
 
@@ -64,7 +65,7 @@ public class MongoConnector {
         JSONObject jsonObj = new JSONObject(json);
         if(_db.getCollection(_coll_name_twitter).find(eq("tweet.id",jsonObj.getString("id"))).first() == null) {
             Document doc = new Document(_TWEET_PARSED_STRING_, null)
-                    .append(_TWEET_JSON_, Document.parse(json));
+                    .append(_TWEET_JSON_, Document.parse(json)).append(SUBSTANCES_STRING_,null);
 
             coll.insertOne(doc);
         } else {
@@ -105,7 +106,9 @@ public class MongoConnector {
                 return true;
 
             } else {
+                /* Uncomment if you want error messages
                 errorMongo("Replace error -> " + UUID + ", text already parsed!");
+                */
                 return false;
             }
         }
@@ -165,6 +168,15 @@ public class MongoConnector {
     }
 
     /**
+     * Gets all substances strings from twitter database
+     * @return Pairs of tweets' IDs and tweets' parsed text
+     */
+    public HashMap<ObjectId, String> getSubstances() {
+        MongoCollection<Document> tweetsCollection = _db.getCollection(_coll_name_twitter);
+        return getParsed(tweetsCollection, SUBSTANCES_STRING_);
+    }
+
+    /**
      * Insert emotions to Twitter database
      * @param UUID The Id of the tweet that we want to insert the emotions to.
      * @param emotions an array list of pair(string, double) where the string is the name of the emotion and
@@ -215,6 +227,17 @@ public class MongoConnector {
 
         errorMongo("Document " + UUID + " not found!");
         return false;
+    }
+
+    /**
+     * Insert emotions to Twitter database
+     * @param UUID The Id of the tweet that we want to insert the related to.
+     * @param substances A string that contains all the substances that exist in the specific tweet
+     * @return True if the insertion was done correctly, false otherwise
+     */
+    public boolean insertSubstancesTwitter(ObjectId UUID, String substances) {
+        MongoCollection<Document> tweets = _db.getCollection(_coll_name_twitter);
+        return insertParsed(UUID, substances, tweets, SUBSTANCES_STRING_);
     }
 
     /**
