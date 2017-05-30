@@ -1,5 +1,5 @@
-# FixTheFixing
-Fix the Fixing EU project code
+# FixTheFixing - SAFEYOU+
+Fix the Fixing - SAFEYOU+ EU projects code
 
 ### Before you run:
 1) Install Mongo in Windows: https://www.youtube.com/watch?v=1uFY60CESlM <br/>
