@@ -46,6 +46,21 @@ public class Analysis {
     }
 
     /**
+     * Constructor of the class; Initializes all variables
+     * @throws IOException
+     */
+    public Analysis() throws IOException {
+        emotions = Emotions.values();
+
+        String senticNetFilename = "./data/senticnet3.rdf.xml";
+        senticNetLib = new SenticNet(senticNetFilename);
+
+        SentimentAnalysis sentiment = new SentimentAnalysis();
+
+        representativeWords = sentiment.getRepresentativeWords();
+    }
+
+    /**
      * Sentiment analysis for the whole case
      * @throws JSONException In case a field cannot be found
      */
@@ -191,7 +206,7 @@ public class Analysis {
      * @return List of pairs (Emotion,Score) for the given tweet
      * @throws IOException
      */
-    private List<Pair<String, Double>> sentiment(String tweet) throws  IOException {
+    public List<Pair<String, Double>> sentiment(String tweet) throws  IOException {
         tweet = tweet.concat(" ");
         List<Pair<String, Double>> scores = new ArrayList<>();
 

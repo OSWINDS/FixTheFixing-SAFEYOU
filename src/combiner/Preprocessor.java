@@ -117,7 +117,7 @@ public class Preprocessor {
      * @param input The tweet's text before the processing
      * @return The parsed tweet text
      */
-    private static String preprocessTweet(String input){
+    public static String preprocessTweet(String input){
         input = prepareText(input);
         String[] tokens = tokenizer(input);
 
