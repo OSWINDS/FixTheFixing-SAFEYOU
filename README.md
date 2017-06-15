@@ -1,5 +1,5 @@
-# FixTheFixing
-Fix the Fixing EU project code
+# FixTheFixing - SAFEYOU+
+Fix the Fixing - SAFEYOU+ EU projects code
 
 ### Before you run:
 1) Install Mongo in Windows: https://www.youtube.com/watch?v=1uFY60CESlM <br/>
@@ -23,7 +23,7 @@ Folder "out" should be created manually. In order to run sentiment analysis a su
   - Add rita.jar to project and if needed change path in getSynonyms function (line: RiWordNet wordnet = new RiWordNet("C:\\Program Files (x86)\\WordNet\\2.1"); // The WordNet directory)
 
 ### Example Arguments for Twitter
-querysearch="(Djokovic OR Novak) fixing" since=2016-01-18 until=2016-01-30 maxtweets=1000 theme="djokovic"
+querysearch="(Djokovic OR Novak) fixing" since=2016-01-18 until=2016-01-30 maxtweets=1000 theme="djokovic" substances="n"
 
 ### Search query for Mongo Explorer (Ctrl+F in IntelliJ)
 For instance, if I'm looking for a tweet created at 2016/01/28 I'd type
