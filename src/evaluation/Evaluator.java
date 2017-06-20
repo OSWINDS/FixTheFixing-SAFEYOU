@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
+import com.github.habernal.confusionmatrix.ConfusionMatrix;
 import combiner.Preprocessor;
 import javafx.util.Pair;
 import sentiment.*;
@@ -17,18 +18,62 @@ import java.util.Scanner;
  */
 public class Evaluator {
 
-    private static HashMap<String,String> annotatedData;
-    private static Analysis analyzer;
+    private static HashMap<String,String> actualSentiment; // The actual sentiment of the dataset based on annotation
+    private static HashMap<String,String> predictedSentiment; // The predicted sentiment of the dataset based on local algorithm
+    private static Analysis analyzer; // Preprocessing class
+    private static ConfusionMatrix cm;
+    private static String datasetPath;
+
+    static {
+        // Initialize Confusion Matrix
+        cm = new ConfusionMatrix();
+
+        actualSentiment = new HashMap<>();
+        predictedSentiment = new HashMap<>();
+
+        // Initialize the preprocessor class
+        try {
+            analyzer = new Analysis();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        datasetPath = "./resources/annotatedData.txt";
+    }
 
     /**
-     * Keep only relevant data from annotated set (6 basic emotions and neutral sentiment)
+     * Step-by-step main class
+     * @param args
      */
-    static {
-        // Prepare new annotated dataset
-        annotatedData = new HashMap<>();
+    public static void main(String[] args) {
+        try {
+            getActualSentiment();
+            calculatePredictedSentiment();
+            fillConfusionMatrix();
+            System.out.println("Accuracy: " + cm.getAccuracy());
+            System.out.println("-------------------------------------------------");
+            System.out.println("Precision per sentiment:");
+            System.out.println(cm.getPrecisionForLabels());
+            System.out.println();
+            System.out.println("Average Precision: " + cm.getAvgPrecision());
+            System.out.println("-------------------------------------------------");
+            System.out.println("Recall per sentiment:");
+            System.out.println(cm.getRecallForLabels());
+            System.out.println();
+            System.out.println("Average Recall: " + cm.getAvgRecall());
+            System.out.println("-------------------------------------------------");
+            System.out.println(cm.printNiceResults());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Gets relevant actual sentiment classes from annotated dataset (namely 6 basic emotions and neutral)
+     */
+    private static void getActualSentiment() {
         // Read the file and keep only relevant lines (referring to 6 basic emotions or neutral)
         try {
-            Scanner input = new Scanner(new FileReader("./resources/annotatedData.txt"));
+            Scanner input = new Scanner(new FileReader(datasetPath));
             String emotion;
             String tweet;
             String[] line;
@@ -40,53 +85,70 @@ public class Evaluator {
                         emotion.compareTo("fear") == 0 || emotion.compareTo("anger") == 0 ||
                         emotion.compareTo("neutral") == 0 || emotion.compareTo("sadness") == 0 ||
                         emotion.compareTo("disgust") == 0 ) {
-                    annotatedData.put(tweet,emotion);
+                    actualSentiment.put(tweet,emotion.toLowerCase());
                 }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
 
-        try {
-            analyzer = new Analysis();
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * Calculates predicted sentiment of given dataset based on local algorithm
+     * @throws IOException
+     */
+    private static void calculatePredictedSentiment() throws IOException {
+        String parsed;
+        String maxSentiment;
+        List<Pair<String, Double>> localSentiment;
+        for(String tweet : actualSentiment.keySet()) { // For each tweet calculate main predicted emotion
+            parsed = Preprocessor.preprocessTweet(tweet); // Preprocess tweet
+            localSentiment = analyzer.sentiment(parsed); // Calculate sentiment
+            maxSentiment = calculateMaxSentiment(localSentiment); // Find main sentiment based on local algorithm
+
+            predictedSentiment.put(tweet,maxSentiment.toLowerCase()); // Add the predicted sentiment to a map
         }
     }
 
+    /**
+     * Fills confusion matrix based on actual sentiment (line) and predicted sentiment (column)
+     */
+    private static void fillConfusionMatrix() {
+       int correct = 0;
+        for(String tweet : actualSentiment.keySet()) {
+            String actualSentimentString = actualSentiment.get(tweet); // Actual Sentiment
+            String predictedSentimentString = predictedSentiment.get(tweet); // Predicted Sentiment
 
-    public static void main(String[] args) {
-        try {
-            System.out.println("Percentage: " + analyzeAnnotated());
-        } catch (IOException e) {
-            e.printStackTrace();
+            if(actualSentimentString.equals(predictedSentimentString)) {
+                correct++;
+            }
+            cm.increaseValue(actualSentimentString,predictedSentimentString);
         }
     }
 
 
     /**
-     * Analyzes the annotated dataset
+     * Calculates total accuracy (deprcated)
      * @return The percentage of correct sentiment labeling (using local algorithm) for an annotated dataset
      * @throws IOException
      */
-    private static double analyzeAnnotated() throws IOException {
+    private static double calculateAccuracy() throws IOException {
         int correct = 0; // The number of correct tweet sentiment
         String parsed;
         String maxSentiment;
         List<Pair<String, Double>> localSentiment;
-        for(String tweet : annotatedData.keySet()) { // For each tweet check if emotion is right
+        for(String tweet : actualSentiment.keySet()) { // For each tweet check if emotion is right
             parsed = Preprocessor.preprocessTweet(tweet); // Preprocess tweet
             localSentiment = analyzer.sentiment(parsed); // Calculate sentiment
             // System.out.println("Tweet: " + tweet + "\n" + localSentiment);
             maxSentiment = calculateMaxSentiment(localSentiment); // Find main sentiment based on local algorithm
             // System.out.println("------------------------------> " + maxSentiment);
             // System.out.println("------------------------------> Expected Sentiment: " + annotatedData.get(tweet));
-            if(maxSentiment.toLowerCase().equals(annotatedData.get(tweet))) { // Compare local sentiment to annotation
+            if(maxSentiment.toLowerCase().equals(actualSentiment.get(tweet))) { // Compare local sentiment to annotation
                 correct++;
             }
         }
-        System.out.println("CORRECT: " + correct);
-        return calculatePercentage(correct, annotatedData.size()); // Get the final percentage of correct sentiment
+        return calculatePercentage(correct, actualSentiment.size()); // Get the final percentage of correct sentiment
     }
 
 

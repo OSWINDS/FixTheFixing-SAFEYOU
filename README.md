@@ -10,6 +10,7 @@ Fix the Fixing - SAFEYOU+ EU projects code
 
 ### Dependencies
 org.mongodb:mongodb-driver:3.2.2
+com.github.habernal:confusion-matrix:1.02
 
 ### Folder Creation
 Folder "out" should be created manually. In order to run sentiment analysis a subfolder with the name of the study case should be created. e.g. "out/djokovic"
