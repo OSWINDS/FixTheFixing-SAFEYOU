@@ -9,7 +9,7 @@ Fix the Fixing - SAFEYOU+ EU projects code
 5) Create mongod service in Windows <br/>
 
 ### Dependencies
-org.mongodb:mongodb-driver:3.2.2
+org.mongodb:mongodb-driver:3.2.2 <br/>
 com.github.habernal:confusion-matrix:1.02
 
 ### Folder Creation
