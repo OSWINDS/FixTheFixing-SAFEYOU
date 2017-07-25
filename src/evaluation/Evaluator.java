@@ -1,15 +1,24 @@
 package evaluation;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.github.habernal.confusionmatrix.ConfusionMatrix;
 import combiner.Preprocessor;
 import javafx.util.Pair;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import sentiment.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.*;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,6 +32,8 @@ public class Evaluator {
     private static Analysis analyzer; // Preprocessing class
     private static ConfusionMatrix cm;
     private static String datasetPath;
+    private static String datasetPathEmotions;
+    private static String datasetPathText;
 
     static {
         // Initialize Confusion Matrix
@@ -37,7 +48,10 @@ public class Evaluator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         datasetPath = "./resources/annotatedData.txt";
+        datasetPathEmotions = "./resources/affectivetext_test.emotions.gold";
+        datasetPathText = "./resources/affectivetext_test.xml";
     }
 
     /**
@@ -46,7 +60,8 @@ public class Evaluator {
      */
     public static void main(String[] args) {
         try {
-            getActualSentiment();
+            //getActualSentiment();
+            getActualSentimentSemEval();
             calculatePredictedSentiment();
             fillConfusionMatrix();
             System.out.println("Accuracy: " + cm.getAccuracy());
@@ -62,9 +77,74 @@ public class Evaluator {
             System.out.println("Average Recall: " + cm.getAvgRecall());
             System.out.println("-------------------------------------------------");
             System.out.println(cm.printNiceResults());
+            System.out.println("-------------------------------------------------");
+            System.out.println("Annotated dataset size: " + actualSentiment.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Gets relevant actual sentiment classes from annotated dataset SemEval (namely 6 basic emotions and neutral)
+     */
+    private static void getActualSentimentSemEval() {
+        // Don't forget neutral emotion
+        try {
+            // The emotions file
+            Scanner inputEmotions = new Scanner(new FileReader(datasetPathEmotions));
+            // The text file
+            File file = new File(datasetPathText);
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+                    .newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            Document document = documentBuilder.parse(file);
+
+
+            String id;
+            String mainEmotion;
+            String text;
+            String[] line;
+            while(inputEmotions.hasNext()) {
+                List<Pair<String,Double>> emotions = new ArrayList<>();
+                line = inputEmotions.nextLine().split(" ");
+
+                // Get id
+                id = line[0];
+                // The emotions for the given id
+                emotions.add(new Pair("anger",Double.valueOf(line[1])));
+                emotions.add(new Pair("disgust",Double.valueOf(line[2])));
+                emotions.add(new Pair("fear",Double.valueOf(line[3])));
+                emotions.add(new Pair("joy",Double.valueOf(line[4])));
+                emotions.add(new Pair("sadness",Double.valueOf(line[5])));
+                emotions.add(new Pair("surprise",Double.valueOf(line[6])));
+                // Get main emotion for the given id
+                mainEmotion = calculateMaxSentiment(emotions); // Get main emotions for specific id
+
+                // For debugging purposes
+                /*if(mainEmotion.equals("neutral")) {
+                    for (Pair<String, Double> em : emotions) {
+                        System.out.println("Emotion: " + em.getKey() + " Value: " + em.getValue());
+                    }
+                    System.out.println("Main Emotion: " + mainEmotion);
+                    System.out.println("--------------------------------");
+                }*/
+
+                // Get the text for the given id
+                XPathFactory xPathfactory = XPathFactory.newInstance();
+                XPath xpath = xPathfactory.newXPath();
+                XPathExpression expr = xpath.compile("//instance[@id=" + id + "]");
+                NodeList nl = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
+                text = nl.item(0).getTextContent();
+
+                actualSentiment.put(text,mainEmotion);
+
+            }
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            e.printStackTrace();
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
